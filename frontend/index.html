@@ -21,6 +21,13 @@
             <input type="file" id="fileInput" accept="image/*">
         </div>
 
+        <div class="themes-section">
+            <h2 class="themes-title">Escolha o tema da moldura:</h2>
+            <div class="themes-grid" id="themesGrid">
+                <!-- Temas serão carregados dinamicamente via JavaScript -->
+            </div>
+        </div>
+
         <div class="frames-section">
             <h2 class="frames-title">Escolha o posicionamento da sua foto:</h2>
             <div class="frames-grid">
@@ -57,14 +64,22 @@
             <h3>Como usar:</h3>
             <ol>
                 <li>Faça upload da sua foto</li>
-                <li>Selecione uma moldura</li>
-                <li>Baixe a imagem com a moldura aplicada</li>
-                <li>Use como foto de perfil no Hornet!</li>
+                <li>Escolha um tema de moldura</li>
+                <li>Selecione o posicionamento da foto</li>
+                <li>Clique em "Baixar Imagem"</li>
             </ol>
+
+            <div class="mobile-tip" style="background: #fff9e6; padding: 15px; border-radius: 8px; margin-top: 15px; border-left: 4px solid #FF6B00;">
+                <strong>📱 No celular:</strong>
+                <p style="margin: 5px 0 0 0; font-size: 0.9em; color: #666;">
+                    Ao clicar em "Baixar", escolha <strong>"Salvar na Galeria"</strong> ou <strong>"Salvar Imagem"</strong> no menu de compartilhamento para adicionar direto às suas fotos!
+                </p>
+            </div>
         </div>
     </div>
 
     <script src="config.js"></script>
+    <script src="themes-config.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

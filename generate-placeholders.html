@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de Placeholders - Temas Hornet</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        h1 {
+            color: #FF6B00;
+        }
+        .theme {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .theme h2 {
+            color: #333;
+        }
+        .images {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .image-container {
+            text-align: center;
+        }
+        canvas {
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            max-width: 100%;
+            height: auto;
+        }
+        button {
+            background: #FF6B00;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover {
+            background: #FDB813;
+        }
+        .instructions {
+            background: #fff9e6;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border-left: 4px solid #FF6B00;
+        }
+        .btn-generate-all {
+            background: #28a745;
+            color: white;
+            padding: 15px 30px;
+            font-size: 18px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 20px 0;
+            display: block;
+            width: 100%;
+        }
+        .btn-generate-all:hover {
+            background: #218838;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎨 Gerador de Imagens Placeholder para Temas</h1>
+
+    <div class="instructions">
+        <h3>📋 Instruções:</h3>
+        <ol>
+            <li>Clique em "🚀 GERAR TODAS AS IMAGENS" abaixo</li>
+            <li>Clique com botão direito em cada imagem → "Salvar imagem como..."</li>
+            <li>Salve cada imagem na pasta correta (indicada abaixo de cada imagem)</li>
+            <li>Ou use o botão "Download" individual de cada imagem</li>
+        </ol>
+        <p><strong>Nota:</strong> Estas são imagens de teste. Substitua pelas imagens reais quando estiver pronto!</p>
+    </div>
+
+    <button class="btn-generate-all" onclick="generateAll()">🚀 GERAR TODAS AS IMAGENS</button>
+
+    <!-- Hornet Brasil -->
+    <div class="theme">
+        <h2>🧡 Hornet Brasil</h2>
+        <div class="images">
+            <div class="image-container">
+                <p><strong>background.png</strong></p>
+                <canvas id="hornet_background" width="1080" height="1080"></canvas>
+                <br>
+                <button onclick="download('hornet_background', 'background.png')">Download</button>
+                <p><small>Salvar em: <code>frontend/assets/themes/hornet_brasil/</code></small></p>
+            </div>
+            <div class="image-container">
+                <p><strong>overlay.png</strong></p>
+                <canvas id="hornet_overlay" width="1080" height="1080"></canvas>
+                <br>
+                <button onclick="download('hornet_overlay', 'overlay.png')">Download</button>
+                <p><small>Salvar em: <code>frontend/assets/themes/hornet_brasil/</code></small></p>
+            </div>
+            <div class="image-container">
+                <p><strong>preview.jpg</strong></p>
+                <canvas id="hornet_preview" width="300" height="300"></canvas>
+                <br>
+                <button onclick="download('hornet_preview', 'preview.jpg', 'image/jpeg')">Download</button>
+                <p><small>Salvar em: <code>frontend/assets/themes/hornet_brasil/</code></small></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pride Month -->
+    <div class="theme">
+        <h2>🏳️‍🌈 Pride Month</h2>
+        <div class="images">
+            <div class="image-container">
+                <p><strong>background.png</strong></p>
+                <canvas id="pride_background" width="1080" height="1080"></canvas>
+                <br>
+                <button onclick="download('pride_background', 'background.png')">Download</button>
+                <p><small>Salvar em: <code>frontend/assets/themes/pride_month/</code></small></p>
+            </div>
+            <div class="image-container">
+                <p><strong>overlay.png</strong></p>
+                <canvas id="pride_overlay" width="1080" height="1080"></canvas>
+                <br>
+                <button onclick="download('pride_overlay', 'overlay.png')">Download</button>
+                <p><small>Salvar em: <code>frontend/assets/themes/pride_month/</code></small></p>
+            </div>
+            <div class="image-container">
+                <p><strong>preview.jpg</strong></p>
+                <canvas id="pride_preview" width="300" height="300"></canvas>
+                <br>
+                <button onclick="download('pride_preview', 'preview.jpg', 'image/jpeg')">Download</button>
+                <p><small>Salvar em: <code>frontend/assets/themes/pride_month/</code></small></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dark Mode -->
+    <div class="theme">
+        <h2>🌙 Dark Mode</h2>
+        <div class="images">
+            <div class="image-container">
+                <p><strong>background.png</strong></p>
+                <canvas id="dark_background" width="1080" height="1080"></canvas>
+                <br>
+                <button onclick="download('dark_background', 'background.png')">Download</button>
+                <p><small>Salvar em: <code>frontend/assets/themes/dark_mode/</code></small></p>
+            </div>
+            <div class="image-container">
+                <p><strong>overlay.png</strong></p>
+                <canvas id="dark_overlay" width="1080" height="1080"></canvas>
+                <br>
+                <button onclick="download('dark_overlay', 'overlay.png')">Download</button>
+                <p><small>Salvar em: <code>frontend/assets/themes/dark_mode/</code></small></p>
+            </div>
+            <div class="image-container">
+                <p><strong>preview.jpg</strong></p>
+                <canvas id="dark_preview" width="300" height="300"></canvas>
+                <br>
+                <button onclick="download('dark_preview', 'preview.jpg', 'image/jpeg')">Download</button>
+                <p><small>Salvar em: <code>frontend/assets/themes/dark_mode/</code></small></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Halloween -->
+    <div class="theme">
+        <h2>🎃 Halloween</h2>
+        <div class="images">
+            <div class="image-container">
+                <p><strong>background.png</strong></p>
+                <canvas id="halloween_background" width="1080" height="1080"></canvas>
+                <br>
+                <button onclick="download('halloween_background', 'background.png')">Download</button>
+                <p><small>Salvar em: <code>frontend/assets/themes/halloween/</code></small></p>
+            </div>
+            <div class="image-container">
+                <p><strong>overlay.png</strong></p>
+                <canvas id="halloween_overlay" width="1080" height="1080"></canvas>
+                <br>
+                <button onclick="download('halloween_overlay', 'overlay.png')">Download</button>
+                <p><small>Salvar em: <code>frontend/assets/themes/halloween/</code></small></p>
+            </div>
+            <div class="image-container">
+                <p><strong>preview.jpg</strong></p>
+                <canvas id="halloween_preview" width="300" height="300"></canvas>
+                <br>
+                <button onclick="download('halloween_preview', 'preview.jpg', 'image/jpeg')">Download</button>
+                <p><small>Salvar em: <code>frontend/assets/themes/halloween/</code></small></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function generateHornetBackground() {
+            const canvas = document.getElementById('hornet_background');
+            const ctx = canvas.getContext('2d');
+            const gradient = ctx.createLinearGradient(0, 0, 1080, 1080);
+            gradient.addColorStop(0, '#FDB813');
+            gradient.addColorStop(1, '#FF6B00');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, 1080, 1080);
+        }
+
+        function generateHornetOverlay() {
+            const canvas = document.getElementById('hornet_overlay');
+            const ctx = canvas.getContext('2d');
+
+            // Fundo transparente
+            ctx.clearRect(0, 0, 1080, 1080);
+
+            // Desenhar morcegos
+            drawBats(ctx, 1080);
+
+            // Logo Hornet Live Brasil
+            ctx.fillStyle = 'white';
+            ctx.font = 'bold 40px Arial';
+            ctx.textAlign = 'right';
+            ctx.fillText('HORNET', 1026, 950);
+            ctx.font = 'bold 60px Arial';
+            ctx.fillText('LIVE', 1026, 1004);
+            ctx.font = '30px Arial';
+            ctx.fillText('BRASIL', 1026, 1048);
+
+            // Círculo LIVE
+            ctx.beginPath();
+            ctx.arc(886, 998, 16, 0, Math.PI * 2);
+            ctx.fillStyle = '#FF6B00';
+            ctx.fill();
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+        }
+
+        function generateHornetPreview() {
+            const canvas = document.getElementById('hornet_preview');
+            const ctx = canvas.getContext('2d');
+            const gradient = ctx.createLinearGradient(0, 0, 300, 300);
+            gradient.addColorStop(0, '#FDB813');
+            gradient.addColorStop(1, '#FF6B00');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, 300, 300);
+
+            // Texto
+            ctx.fillStyle = 'white';
+            ctx.font = 'bold 60px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('🧡', 150, 150);
+            ctx.font = 'bold 24px Arial';
+            ctx.fillText('HORNET', 150, 200);
+            ctx.font = '18px Arial';
+            ctx.fillText('BRASIL', 150, 230);
+        }
+
+        function generatePrideBackground() {
+            const canvas = document.getElementById('pride_background');
+            const ctx = canvas.getContext('2d');
+            const colors = ['#E40303', '#FF8C00', '#FFED00', '#008026', '#24408E', '#732982'];
+            const height = 1080 / colors.length;
+            colors.forEach((color, i) => {
+                ctx.fillStyle = color;
+                ctx.fillRect(0, i * height, 1080, height);
+            });
+        }
+
+        function generatePrideOverlay() {
+            const canvas = document.getElementById('pride_overlay');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, 1080, 1080);
+            drawBats(ctx, 1080);
+
+            // Logo
+            ctx.fillStyle = 'white';
+            ctx.font = 'bold 40px Arial';
+            ctx.textAlign = 'right';
+            ctx.fillText('PRIDE', 1026, 950);
+            ctx.font = 'bold 60px Arial';
+            ctx.fillText('MONTH', 1026, 1020);
+        }
+
+        function generatePridePreview() {
+            const canvas = document.getElementById('pride_preview');
+            const ctx = canvas.getContext('2d');
+            const colors = ['#E40303', '#FF8C00', '#FFED00', '#008026', '#24408E', '#732982'];
+            const height = 300 / colors.length;
+            colors.forEach((color, i) => {
+                ctx.fillStyle = color;
+                ctx.fillRect(0, i * height, 300, height);
+            });
+            ctx.fillStyle = 'white';
+            ctx.font = 'bold 50px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('🏳️‍🌈', 150, 160);
+        }
+
+        function generateDarkBackground() {
+            const canvas = document.getElementById('dark_background');
+            const ctx = canvas.getContext('2d');
+            const gradient = ctx.createLinearGradient(0, 0, 1080, 1080);
+            gradient.addColorStop(0, '#1a1a1a');
+            gradient.addColorStop(1, '#2d2d2d');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, 1080, 1080);
+        }
+
+        function generateDarkOverlay() {
+            const canvas = document.getElementById('dark_overlay');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, 1080, 1080);
+
+            // Morcegos brancos
+            ctx.fillStyle = '#cccccc';
+            drawBats(ctx, 1080);
+
+            // Logo
+            ctx.fillStyle = '#FF6B00';
+            ctx.font = 'bold 40px Arial';
+            ctx.textAlign = 'right';
+            ctx.fillText('DARK', 1026, 950);
+            ctx.font = 'bold 60px Arial';
+            ctx.fillText('MODE', 1026, 1020);
+        }
+
+        function generateDarkPreview() {
+            const canvas = document.getElementById('dark_preview');
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#1a1a1a';
+            ctx.fillRect(0, 0, 300, 300);
+            ctx.fillStyle = '#cccccc';
+            ctx.font = 'bold 60px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('🌙', 150, 160);
+        }
+
+        function generateHalloweenBackground() {
+            const canvas = document.getElementById('halloween_background');
+            const ctx = canvas.getContext('2d');
+            const gradient = ctx.createLinearGradient(0, 0, 1080, 1080);
+            gradient.addColorStop(0, '#1a0033');
+            gradient.addColorStop(0.5, '#8B008B');
+            gradient.addColorStop(1, '#FF6600');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, 1080, 1080);
+        }
+
+        function generateHalloweenOverlay() {
+            const canvas = document.getElementById('halloween_overlay');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, 1080, 1080);
+            drawBats(ctx, 1080);
+
+            // Logo
+            ctx.fillStyle = '#FF6600';
+            ctx.font = 'bold 40px Arial';
+            ctx.textAlign = 'right';
+            ctx.fillText('HAPPY', 1026, 950);
+            ctx.font = 'bold 60px Arial';
+            ctx.fillText('HALLOWEEN', 1026, 1020);
+        }
+
+        function generateHalloweenPreview() {
+            const canvas = document.getElementById('halloween_preview');
+            const ctx = canvas.getContext('2d');
+            const gradient = ctx.createLinearGradient(0, 0, 300, 300);
+            gradient.addColorStop(0, '#8B008B');
+            gradient.addColorStop(1, '#FF6600');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, 300, 300);
+            ctx.fillStyle = '#FF6600';
+            ctx.font = 'bold 60px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('🎃', 150, 160);
+        }
+
+        function drawBats(ctx, size) {
+            const batPositions = [
+                {x: 0.15, y: 0.12, scale: 0.08},
+                {x: 0.08, y: 0.35, scale: 0.09},
+                {x: 0.12, y: 0.55, scale: 0.07},
+                {x: 0.18, y: 0.75, scale: 0.08},
+                {x: 0.35, y: 0.88, scale: 0.09},
+                {x: 0.25, y: 0.08, scale: 0.06},
+            ];
+
+            ctx.fillStyle = ctx.fillStyle || '#1a1a1a';
+            batPositions.forEach(pos => {
+                const batSize = size * pos.scale;
+                const batX = size * pos.x;
+                const batY = size * pos.y;
+
+                ctx.save();
+                ctx.translate(batX, batY);
+                ctx.beginPath();
+                ctx.ellipse(0, 0, batSize * 0.3, batSize * 0.4, 0, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.beginPath();
+                ctx.moveTo(-batSize * 0.3, 0);
+                ctx.quadraticCurveTo(-batSize * 0.6, -batSize * 0.4, -batSize * 0.8, -batSize * 0.2);
+                ctx.quadraticCurveTo(-batSize * 0.6, 0, -batSize * 0.3, 0);
+                ctx.fill();
+                ctx.beginPath();
+                ctx.moveTo(batSize * 0.3, 0);
+                ctx.quadraticCurveTo(batSize * 0.6, -batSize * 0.4, batSize * 0.8, -batSize * 0.2);
+                ctx.quadraticCurveTo(batSize * 0.6, 0, batSize * 0.3, 0);
+                ctx.fill();
+                ctx.restore();
+            });
+        }
+
+        function generateAll() {
+            generateHornetBackground();
+            generateHornetOverlay();
+            generateHornetPreview();
+            generatePrideBackground();
+            generatePrideOverlay();
+            generatePridePreview();
+            generateDarkBackground();
+            generateDarkOverlay();
+            generateDarkPreview();
+            generateHalloweenBackground();
+            generateHalloweenOverlay();
+            generateHalloweenPreview();
+            alert('✅ Todas as imagens foram geradas! Agora clique com botão direito em cada uma e salve na pasta indicada.');
+        }
+
+        function download(canvasId, filename, mimeType = 'image/png') {
+            const canvas = document.getElementById(canvasId);
+            const link = document.createElement('a');
+            link.download = filename;
+            link.href = canvas.toDataURL(mimeType);
+            link.click();
+        }
+    </script>
+</body>
+</html>
