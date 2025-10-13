@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de Molduras - Hornet Brasil</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🐝 Gerador de Molduras Hornet Brasil</h1>
+            <p class="subtitle">Personalize sua foto de perfil</p>
+        </header>
+
+        <div class="upload-section" id="uploadSection">
+            <div class="upload-icon">📸</div>
+            <h3>Clique ou arraste sua foto aqui</h3>
+            <p style="color: #999; margin-top: 10px;">Formatos aceitos: JPG, PNG</p>
+            <input type="file" id="fileInput" accept="image/*">
+        </div>
+
+        <div class="frames-section">
+            <h2 class="frames-title">Escolha o posicionamento da sua foto:</h2>
+            <div class="frames-grid">
+                <div class="frame-option selected" data-frame="center">
+                    <div class="frame-preview">⭕</div>
+                    <div>Centro Circular</div>
+                </div>
+                <div class="frame-option" data-frame="full">
+                    <div class="frame-preview">🖼️</div>
+                    <div>Fundo Completo</div>
+                </div>
+                <div class="frame-option" data-frame="topleft">
+                    <div class="frame-preview">📐</div>
+                    <div>Canto Superior</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="canvas-container" id="canvasContainer">
+            <canvas id="canvas"></canvas>
+        </div>
+
+        <div class="loading" id="loading" style="display: none;">
+            <div class="spinner"></div>
+            <p>Processando sua imagem...</p>
+        </div>
+
+        <div class="buttons">
+            <button id="downloadBtn">⬇️ Baixar Imagem</button>
+            <button id="resetBtn">🔄 Nova Foto</button>
+        </div>
+
+        <div class="instructions">
+            <h3>Como usar:</h3>
+            <ol>
+                <li>Faça upload da sua foto</li>
+                <li>Selecione uma moldura</li>
+                <li>Baixe a imagem com a moldura aplicada</li>
+                <li>Use como foto de perfil no Hornet!</li>
+            </ol>
+        </div>
+    </div>
+
+    <script src="config.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
