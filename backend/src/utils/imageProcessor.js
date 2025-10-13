@@ -1,4 +1,9 @@
 const { createCanvas, loadImage } = require('canvas');
+const path = require('path');
+
+// Caminhos para as imagens overlay
+const LAYER_ONE_PATH = path.join(__dirname, '../../public/assets/Hornet_Brasil_Layer_One.png');
+const LAYER_TWO_PATH = path.join(__dirname, '../../public/assets/Hornet_Brasil_Layer_Two.png');
 
 async function applyFrame(imageData, frameType) {
     try {
@@ -9,19 +14,26 @@ async function applyFrame(imageData, frameType) {
         const canvas = createCanvas(size, size);
         const ctx = canvas.getContext('2d');
 
-        // Fundo laranja do Hornet com gradiente
-        const bgGradient = ctx.createLinearGradient(0, 0, size, size);
-        bgGradient.addColorStop(0, '#FF8C00');
-        bgGradient.addColorStop(1, '#FF6B00');
-        ctx.fillStyle = bgGradient;
-        ctx.fillRect(0, 0, size, size);
+        // 1. Desenhar fundo laranja (Layer Two)
+        try {
+            const layerTwo = await loadImage(LAYER_TWO_PATH);
+            ctx.drawImage(layerTwo, 0, 0, size, size);
+        } catch (error) {
+            console.warn('Não foi possível carregar Layer Two, usando fallback');
+            // Fallback: fundo laranja com gradiente
+            const bgGradient = ctx.createLinearGradient(0, 0, size, size);
+            bgGradient.addColorStop(0, '#FF8C00');
+            bgGradient.addColorStop(1, '#FF6B00');
+            ctx.fillStyle = bgGradient;
+            ctx.fillRect(0, 0, size, size);
+        }
 
-        // Calcular escala da imagem
+        // 2. Calcular escala da imagem
         const scale = Math.max(size / img.width, size / img.height);
         const x = (size - img.width * scale) / 2;
         const y = (size - img.height * scale) / 2;
 
-        // Aplicar o tipo de moldura selecionado
+        // 3. Aplicar o tipo de moldura selecionado
         switch (frameType) {
             case 'center':
                 applyCenterFrame(ctx, img, size);
@@ -36,9 +48,15 @@ async function applyFrame(imageData, frameType) {
                 applyCenterFrame(ctx, img, size);
         }
 
-        // Desenhar morcegos e branding
-        drawBats(ctx, size);
-        drawBranding(ctx, size);
+        // 4. Desenhar morcegos por cima (Layer One)
+        try {
+            const layerOne = await loadImage(LAYER_ONE_PATH);
+            ctx.drawImage(layerOne, 0, 0, size, size);
+        } catch (error) {
+            console.warn('Não foi possível carregar Layer One, usando fallback');
+            // Fallback: desenhar morcegos manualmente
+            drawBatsFallback(ctx, size);
+        }
 
         // Retornar imagem processada como data URL
         return canvas.toDataURL('image/png');
@@ -104,7 +122,8 @@ function applyTopLeftFrame(ctx, img, size) {
     ctx.stroke();
 }
 
-function drawBats(ctx, size) {
+// Fallback: desenhar morcegos manualmente
+function drawBatsFallback(ctx, size) {
     const batPositions = [
         {x: 0.15, y: 0.12, scale: 0.08},
         {x: 0.08, y: 0.35, scale: 0.09},
@@ -144,9 +163,7 @@ function drawBats(ctx, size) {
 
         ctx.restore();
     });
-}
 
-function drawBranding(ctx, size) {
     // Logo Hornet Live Brasil no canto inferior direito
     ctx.fillStyle = 'white';
     ctx.font = `bold ${size * 0.04}px Arial`;

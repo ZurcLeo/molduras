@@ -11,6 +11,34 @@ const loading = document.getElementById('loading');
 let uploadedImage = null;
 let selectedFrame = 'center';
 
+// Pré-carregar as imagens overlay
+const layerOne = new Image(); // Morcegos (fundo transparente)
+const layerTwo = new Image(); // Fundo laranja
+layerOne.crossOrigin = "anonymous";
+layerTwo.crossOrigin = "anonymous";
+layerOne.src = 'assets/Hornet_Brasil_Layer_One.png';
+layerTwo.src = 'assets/Hornet_Brasil_Layer_Two.png';
+
+let layersLoaded = { one: false, two: false };
+
+layerOne.onload = () => {
+    layersLoaded.one = true;
+    console.log('Layer One (morcegos) carregada');
+};
+
+layerTwo.onload = () => {
+    layersLoaded.two = true;
+    console.log('Layer Two (fundo laranja) carregada');
+};
+
+layerOne.onerror = () => {
+    console.warn('Erro ao carregar Layer One - usando fallback');
+};
+
+layerTwo.onerror = () => {
+    console.warn('Erro ao carregar Layer Two - usando fallback');
+};
+
 // Upload de arquivo
 uploadSection.addEventListener('click', () => fileInput.click());
 
@@ -62,80 +90,38 @@ function loadImage(file) {
     reader.readAsDataURL(file);
 }
 
-// Aplicar moldura (versão local - fallback se API não estiver disponível)
+// Aplicar moldura
 async function applyFrame() {
-    try {
-        // Tentar usar a API do backend
-        await applyFrameWithAPI();
-    } catch (error) {
-        console.error('Erro ao usar API, aplicando moldura localmente:', error);
-        // Fallback: aplicar moldura localmente
-        applyFrameLocally();
-    }
-}
-
-// Aplicar moldura usando a API do backend
-async function applyFrameWithAPI() {
     loading.style.display = 'block';
     canvasContainer.style.display = 'none';
     downloadBtn.style.display = 'none';
     resetBtn.style.display = 'none';
 
-    // Converter imagem para base64
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    canvas.width = uploadedImage.width;
-    canvas.height = uploadedImage.height;
-    ctx.drawImage(uploadedImage, 0, 0);
-    const imageData = canvas.toDataURL('image/jpeg', 0.9);
+    // Aguardar um pouco para garantir que as layers estão carregadas
+    await new Promise(resolve => setTimeout(resolve, 100));
 
-    const response = await fetch(`${API_CONFIG.BASE_URL}/api/apply-frame`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            image: imageData,
-            frameType: selectedFrame
-        })
-    });
-
-    if (!response.ok) {
-        throw new Error('Erro na API');
-    }
-
-    const data = await response.json();
-
-    // Carregar imagem processada
-    const img = new Image();
-    img.onload = () => {
-        const mainCanvas = document.getElementById('canvas');
-        const mainCtx = mainCanvas.getContext('2d');
-        mainCanvas.width = img.width;
-        mainCanvas.height = img.height;
-        mainCtx.drawImage(img, 0, 0);
-
-        loading.style.display = 'none';
-        canvasContainer.style.display = 'block';
-        downloadBtn.style.display = 'inline-block';
-        resetBtn.style.display = 'inline-block';
-    };
-    img.src = data.processedImage;
+    applyFrameLocally();
 }
 
-// Aplicar moldura localmente (fallback)
+// Aplicar moldura localmente usando as imagens PNG
 function applyFrameLocally() {
     const size = 1080;
     canvas.width = size;
     canvas.height = size;
 
-    // Fundo laranja do Hornet
-    const bgGradient = ctx.createLinearGradient(0, 0, size, size);
-    bgGradient.addColorStop(0, '#FF8C00');
-    bgGradient.addColorStop(1, '#FF6B00');
-    ctx.fillStyle = bgGradient;
-    ctx.fillRect(0, 0, size, size);
+    // 1. Desenhar fundo laranja (Layer Two)
+    if (layersLoaded.two) {
+        ctx.drawImage(layerTwo, 0, 0, size, size);
+    } else {
+        // Fallback: fundo laranja gradiente
+        const bgGradient = ctx.createLinearGradient(0, 0, size, size);
+        bgGradient.addColorStop(0, '#FF8C00');
+        bgGradient.addColorStop(1, '#FF6B00');
+        ctx.fillStyle = bgGradient;
+        ctx.fillRect(0, 0, size, size);
+    }
 
+    // 2. Desenhar a foto do usuário de acordo com o frame selecionado
     const scale = Math.max(size / uploadedImage.width, size / uploadedImage.height);
     const x = (size - uploadedImage.width * scale) / 2;
     const y = (size - uploadedImage.height * scale) / 2;
@@ -165,7 +151,7 @@ function applyFrameLocally() {
         ctx.stroke();
 
     } else if (selectedFrame === 'full') {
-        // Foto como fundo completo
+        // Foto como fundo completo com opacidade
         ctx.globalAlpha = 0.7;
         ctx.drawImage(uploadedImage, x, y, uploadedImage.width * scale, uploadedImage.height * scale);
         ctx.globalAlpha = 1.0;
@@ -195,8 +181,13 @@ function applyFrameLocally() {
         ctx.stroke();
     }
 
-    // Desenhar morcegos
-    drawBats(ctx, size);
+    // 3. Desenhar morcegos por cima (Layer One)
+    if (layersLoaded.one) {
+        ctx.drawImage(layerOne, 0, 0, size, size);
+    } else {
+        // Fallback: desenhar morcegos manualmente
+        drawBatsFallback(ctx, size);
+    }
 
     // Mostrar canvas e botões
     loading.style.display = 'none';
@@ -205,8 +196,8 @@ function applyFrameLocally() {
     resetBtn.style.display = 'inline-block';
 }
 
-// Função para desenhar morcegos
-function drawBats(ctx, size) {
+// Fallback: Função para desenhar morcegos caso a imagem não carregue
+function drawBatsFallback(ctx, size) {
     const batPositions = [
         {x: 0.15, y: 0.12, scale: 0.08},
         {x: 0.08, y: 0.35, scale: 0.09},
