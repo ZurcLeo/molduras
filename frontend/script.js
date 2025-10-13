@@ -23,20 +23,20 @@ let layersLoaded = { one: false, two: false };
 
 layerOne.onload = () => {
     layersLoaded.one = true;
-    console.log('Layer One (morcegos) carregada');
+    console.log('✓ Layer One (morcegos) carregada');
 };
 
 layerTwo.onload = () => {
     layersLoaded.two = true;
-    console.log('Layer Two (fundo laranja) carregada');
+    console.log('✓ Layer Two (fundo laranja) carregada');
 };
 
 layerOne.onerror = () => {
-    console.warn('Erro ao carregar Layer One - usando fallback');
+    console.warn('⚠ Erro ao carregar Layer One - usando fallback');
 };
 
 layerTwo.onerror = () => {
-    console.warn('Erro ao carregar Layer Two - usando fallback');
+    console.warn('⚠ Erro ao carregar Layer Two - usando fallback');
 };
 
 // Upload de arquivo
@@ -109,11 +109,18 @@ function applyFrameLocally() {
     canvas.width = size;
     canvas.height = size;
 
-    // 1. Desenhar fundo laranja (Layer Two)
+    console.log('🎨 Iniciando composição das camadas...');
+    console.log('Layer One carregada:', layersLoaded.one);
+    console.log('Layer Two carregada:', layersLoaded.two);
+
+    // ORDEM CORRETA DE COMPOSIÇÃO:
+
+    // PASSO 1: Desenhar fundo laranja (Layer Two OU gradiente)
     if (layersLoaded.two) {
+        console.log('📐 Desenhando Layer Two (fundo laranja)');
         ctx.drawImage(layerTwo, 0, 0, size, size);
     } else {
-        // Fallback: fundo laranja gradiente
+        console.log('📐 Desenhando fundo laranja (fallback)');
         const bgGradient = ctx.createLinearGradient(0, 0, size, size);
         bgGradient.addColorStop(0, '#FF8C00');
         bgGradient.addColorStop(1, '#FF6B00');
@@ -121,7 +128,9 @@ function applyFrameLocally() {
         ctx.fillRect(0, 0, size, size);
     }
 
-    // 2. Desenhar a foto do usuário de acordo com o frame selecionado
+    // PASSO 2: Desenhar a foto do usuário de acordo com o frame selecionado
+    console.log('👤 Desenhando foto do usuário - Frame:', selectedFrame);
+
     const scale = Math.max(size / uploadedImage.width, size / uploadedImage.height);
     const x = (size - uploadedImage.width * scale) / 2;
     const y = (size - uploadedImage.height * scale) / 2;
@@ -181,13 +190,18 @@ function applyFrameLocally() {
         ctx.stroke();
     }
 
-    // 3. Desenhar morcegos por cima (Layer One)
+    // PASSO 3: Desenhar morcegos por cima (Layer One com transparência)
     if (layersLoaded.one) {
+        console.log('🦇 Desenhando Layer One (morcegos) por cima');
+        // Garantir que o blend mode está correto para transparência
+        ctx.globalCompositeOperation = 'source-over';
         ctx.drawImage(layerOne, 0, 0, size, size);
     } else {
-        // Fallback: desenhar morcegos manualmente
+        console.log('🦇 Desenhando morcegos (fallback)');
         drawBatsFallback(ctx, size);
     }
+
+    console.log('✅ Composição finalizada!');
 
     // Mostrar canvas e botões
     loading.style.display = 'none';

@@ -48,12 +48,15 @@ async function applyFrame(imageData, frameType) {
                 applyCenterFrame(ctx, img, size);
         }
 
-        // 4. Desenhar morcegos por cima (Layer One)
+        // 4. Desenhar morcegos por cima (Layer One com transparência)
         try {
             const layerOne = await loadImage(LAYER_ONE_PATH);
+            // Garantir que o blend mode está correto para transparência
+            ctx.globalCompositeOperation = 'source-over';
             ctx.drawImage(layerOne, 0, 0, size, size);
+            console.log('✓ Layer One (morcegos) desenhada por cima');
         } catch (error) {
-            console.warn('Não foi possível carregar Layer One, usando fallback');
+            console.warn('⚠ Não foi possível carregar Layer One, usando fallback');
             // Fallback: desenhar morcegos manualmente
             drawBatsFallback(ctx, size);
         }
