@@ -112,7 +112,7 @@ const THEMES = {
         overlay: 'assets/themes/zumbis/overlay.png',
         preview: 'assets/themes/zumbis/preview.jpg',
         colors: {
-            primary: '#463B23',
+            primary: '#81CD11',
             secondary: '#303836',
             gradient: 'linear-gradient(135deg, #0a0a0a 0%, #2F4F2F 50%, #8B0000 100%)'
         },
