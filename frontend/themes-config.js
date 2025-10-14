@@ -151,6 +151,86 @@ const THEMES = {
         }
     },
 
+    natal: {
+        id: 'natal',
+        name: 'Natal',
+        emoji: '🎄',
+        background: 'assets/themes/natal/background.png',
+        overlay: 'assets/themes/natal/overlay.png',
+        preview: 'assets/themes/natal/preview.jpg',
+        colors: {
+            primary: '#F25E39',
+            secondary: '#F25E39',
+            gradient: 'linear-gradient(135deg, #FFFFFF 0%, #F0F0F0 100%)'
+        },
+        description: 'Tema minimalista natalino',
+        featured: false,
+        available: {
+            start: '12-01', // 1º de outubro
+            end: '12-31'    // 31 de outubro
+        }
+    },
+
+    ano_novo: {
+        id: 'ano_novo',
+        name: 'Ano Novo',
+        emoji: '✨',
+        background: 'assets/themes/ano_novo/background.png',
+        overlay: 'assets/themes/ano_novo/overlay.png',
+        preview: 'assets/themes/ano_novo/preview.jpg',
+        colors: {
+            primary: '#F25E39',
+            secondary: '#F25E39',
+            gradient: 'linear-gradient(135deg, #FFFFFF 0%, #F0F0F0 100%)'
+        },
+        description: 'Tema minimalista de ano novo',
+        featured: false,
+        available: {
+            start: '12-01', // 1º de outubro
+            end: '12-31'    // 31 de outubro
+        }
+    },
+
+    novembro_azul: {
+        id: 'novembro_azul',
+        name: 'Novembro Azul',
+        emoji: '💙',
+        background: 'assets/themes/novembro_azul/background.png',
+        overlay: 'assets/themes/novembro_azul/overlay.png',
+        preview: 'assets/themes/novembro_azul/preview.jpg',
+        colors: {
+            primary: '#F25E39',
+            secondary: '#F25E39',
+            gradient: 'linear-gradient(135deg, #FFFFFF 0%, #F0F0F0 100%)'
+        },
+        description: 'Tema minimalista do novembro azul',
+        featured: false,
+        available: {
+            start: '11-01', // 1º de outubro
+            end: '11-30'    // 31 de outubro
+        }
+    },
+
+    consciencia_negra: {
+        id: 'consciencia_negra',
+        name: 'Consciencia Negra',
+        emoji: '✊🏿',
+        background: 'assets/themes/consciencia_negra/background.png',
+        overlay: 'assets/themes/consciencia_negra/overlay.png',
+        preview: 'assets/themes/consciencia_negra/preview.jpg',
+        colors: {
+            primary: '#F25E39',
+            secondary: '#F25E39',
+            gradient: 'linear-gradient(135deg, #FFFFFF 0%, #F0F0F0 100%)'
+        },
+        description: 'Tema minimalista do novembro azul',
+        featured: false,
+        available: {
+            start: '11-01', // 1º de outubro
+            end: '11-30'    // 31 de outubro
+        }
+    },
+
     brasil: {
         id: 'brasil',
         name: 'Brasil',
