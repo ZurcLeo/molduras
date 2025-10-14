@@ -180,6 +180,57 @@ h1 {
     background: #8B00FF;
 }
 
+/* Seção de Formato */
+.format-section {
+    margin-bottom: 30px;
+}
+
+.format-title {
+    font-size: 1.3em;
+    color: #1a1a1a;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.format-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+}
+
+.format-option {
+    border: 3px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 15px;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-align: center;
+    background: white;
+}
+
+.format-option:hover {
+    border-color: #FDB813;
+    transform: scale(1.05);
+}
+
+.format-option.selected {
+    border-color: #FF6B00;
+    background: #fff9e6;
+    box-shadow: 0 5px 15px rgba(255, 107, 0, 0.3);
+}
+
+.format-preview {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 10px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #FDB813 0%, #FF6B00 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2em;
+}
+
 /* Seção de Molduras (Frames) */
 .frames-section {
     margin-bottom: 30px;

@@ -23,7 +23,7 @@ const THEMES = {
         preview: 'assets/themes/hornet_brasil/preview.jpg',
         colors: {
             primary: '#FF6B00',
-            secondary: '#FDB813',
+            secondary: '#FF751F',
             gradient: 'linear-gradient(135deg, #FDB813 0%, #FF6B00 100%)'
         },
         description: 'Tema oficial Hornet Brasil com fundo laranja vibrante',
@@ -39,8 +39,8 @@ const THEMES = {
         overlay: 'assets/themes/pride_month/overlay.png',
         preview: 'assets/themes/pride_month/preview.jpg',
         colors: {
-            primary: '#E40303',
-            secondary: '#8B00FF',
+            primary: '#1E4253',
+            secondary: '#112941',
             gradient: 'linear-gradient(135deg, #E40303 0%, #FF8C00 16%, #FFED00 32%, #008026 48%, #24408E 64%, #732982 80%, #8B00FF 100%)'
         },
         description: 'Celebre o Orgulho LGBTQIA+ com arco-íris',
@@ -56,8 +56,8 @@ const THEMES = {
         overlay: 'assets/themes/dark_mode/overlay.png',
         preview: 'assets/themes/dark_mode/preview.jpg',
         colors: {
-            primary: '#1a1a1a',
-            secondary: '#FF6B00',
+            primary: '#9C00D0',
+            secondary: '#9C00D0',
             gradient: 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)'
         },
         description: 'Tema escuro elegante e moderno',
@@ -72,8 +72,8 @@ const THEMES = {
         overlay: 'assets/themes/halloween/overlay.png',
         preview: 'assets/themes/halloween/preview.jpg',
         colors: {
-            primary: '#8B008B',
-            secondary: '#FF6600',
+            primary: '#F25E39',
+            secondary: '#F25E39',
             gradient: 'linear-gradient(135deg, #1a0033 0%, #8B008B 50%, #FF6600 100%)'
         },
         description: 'Tema especial de Halloween com cores roxas e laranjas',
@@ -92,8 +92,8 @@ const THEMES = {
         overlay: 'assets/themes/outubro_rosa/overlay.png',
         preview: 'assets/themes/outubro_rosa/preview.jpg',
         colors: {
-            primary: '#FF69B4',
-            secondary: '#FFB6C1',
+            primary: '#F4298A',
+            secondary: '#F4288A',
             gradient: 'linear-gradient(135deg, #FF1493 0%, #FF69B4 50%, #FFB6C1 100%)'
         },
         description: 'Campanha de conscientização sobre câncer de mama',
@@ -112,8 +112,8 @@ const THEMES = {
         overlay: 'assets/themes/zumbis/overlay.png',
         preview: 'assets/themes/zumbis/preview.jpg',
         colors: {
-            primary: '#2F4F2F',
-            secondary: '#8B0000',
+            primary: '#463B23',
+            secondary: '#303836',
             gradient: 'linear-gradient(135deg, #0a0a0a 0%, #2F4F2F 50%, #8B0000 100%)'
         },
         description: 'Tema apocalipse zumbi com tons verdes e sangue',
@@ -128,8 +128,8 @@ const THEMES = {
         overlay: 'assets/themes/morcegos/overlay.png',
         preview: 'assets/themes/morcegos/preview.jpg',
         colors: {
-            primary: '#000000',
-            secondary: '#FFFFFF',
+            primary: '#F25E39',
+            secondary: '#F25E39',
             gradient: 'linear-gradient(135deg, #FFFFFF 0%, #F0F0F0 100%)'
         },
         description: 'Tema minimalista com morcegos pretos e aranhas',
@@ -144,8 +144,8 @@ const THEMES = {
         overlay: 'assets/themes/brasil/overlay.png',
         preview: 'assets/themes/brasil/preview.jpg',
         colors: {
-            primary: '#009B3A',
-            secondary: '#FEDF00',
+            primary: '#72AC47',
+            secondary: '#72AC47',
             gradient: 'linear-gradient(135deg, #009B3A 0%, #FEDF00 100%)'
         },
         description: 'Celebre a fauna brasileira com verde e amarelo',

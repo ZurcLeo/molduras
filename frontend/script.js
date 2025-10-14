@@ -7,11 +7,13 @@ const downloadBtn = document.getElementById('downloadBtn');
 const shareBtn = document.getElementById('shareBtn');
 const resetBtn = document.getElementById('resetBtn');
 const frameOptions = document.querySelectorAll('.frame-option');
+const formatOptions = document.querySelectorAll('.format-option');
 const loading = document.getElementById('loading');
 const themesGrid = document.getElementById('themesGrid');
 
 let uploadedImage = null;
 let selectedFrame = 'center';
+let selectedFormat = 'square';
 let selectedTheme = DEFAULT_THEME;
 
 // Cache de imagens por tema
@@ -252,6 +254,19 @@ uploadSection.addEventListener('drop', (e) => {
 });
 
 // =====================================
+// SELEÇÃO DE FORMATO
+// =====================================
+
+formatOptions.forEach(option => {
+    option.addEventListener('click', () => {
+        formatOptions.forEach(opt => opt.classList.remove('selected'));
+        option.classList.add('selected');
+        selectedFormat = option.dataset.format;
+        if (uploadedImage) applyFrame();
+    });
+});
+
+// =====================================
 // SELEÇÃO DE FRAME (POSICIONAMENTO)
 // =====================================
 
@@ -293,51 +308,80 @@ async function applyFrame() {
 }
 
 function applyFrameLocally() {
-    const size = 1080;
-    canvas.width = size;
-    canvas.height = size;
+    const width = 1080;
+    const height = selectedFormat === 'portrait' ? 1360 : 1080; // 1080 + 140 (cima) + 140 (baixo) = 1360
+    canvas.width = width;
+    canvas.height = height;
 
     const theme = getThemeById(selectedTheme);
     console.log(`🎨 Aplicando moldura com tema: ${theme.name}`);
     console.log(`📐 Posicionamento: ${selectedFrame}`);
+    console.log(`📱 Formato: ${selectedFormat} (${width}x${height})`);
 
     // PASSO 1: Desenhar fundo (Layer Two)
     if (layersLoaded.two && layerTwo && layerTwo.complete) {
         console.log('📐 Desenhando Layer Two (fundo) - imagem carregada');
-        ctx.drawImage(layerTwo, 0, 0, size, size);
+
+        if (selectedFormat === 'portrait') {
+            // Para retrato: desenhar fundo quadrado no centro com barras acima e abaixo
+            const squareSize = 1080;
+            const yOffset = (height - squareSize) / 2;
+
+            // Preencher barras com gradiente
+            const bgGradient = ctx.createLinearGradient(0, 0, width, height);
+            bgGradient.addColorStop(0, theme.colors?.primary || '#FDB813');
+            bgGradient.addColorStop(1, theme.colors?.secondary || '#FF6B00');
+            ctx.fillStyle = bgGradient;
+            ctx.fillRect(0, 0, width, height);
+
+            // Desenhar imagem quadrada no centro
+            ctx.drawImage(layerTwo, 0, yOffset, squareSize, squareSize);
+        } else {
+            // Quadrado normal
+            ctx.drawImage(layerTwo, 0, 0, width, height);
+        }
     } else {
         console.log('📐 Desenhando fundo (fallback) - gerando gradiente dinamicamente');
         // Fallback: usar cores do tema
-        const bgGradient = ctx.createLinearGradient(0, 0, size, size);
+        const bgGradient = ctx.createLinearGradient(0, 0, width, height);
         bgGradient.addColorStop(0, theme.colors?.primary || '#FDB813');
         bgGradient.addColorStop(1, theme.colors?.secondary || '#FF6B00');
         ctx.fillStyle = bgGradient;
-        ctx.fillRect(0, 0, size, size);
+        ctx.fillRect(0, 0, width, height);
     }
 
     // PASSO 2: Desenhar foto do usuário
     console.log('👤 Desenhando foto do usuário');
 
-    const scale = Math.max(size / uploadedImage.width, size / uploadedImage.height);
-    const x = (size - uploadedImage.width * scale) / 2;
-    const y = (size - uploadedImage.height * scale) / 2;
+    const scale = Math.max(width / uploadedImage.width, height / uploadedImage.height);
+    const x = (width - uploadedImage.width * scale) / 2;
+    const y = (height - uploadedImage.height * scale) / 2;
 
     if (selectedFrame === 'center') {
-        drawCenterFrame(size);
+        drawCenterFrame(width, height);
     } else if (selectedFrame === 'full') {
-        drawFullFrame(size, x, y, scale);
+        drawFullFrame(width, height, x, y, scale);
     } else if (selectedFrame === 'topleft') {
-        drawTopLeftFrame(size);
+        drawTopLeftFrame(width, height);
     }
 
     // PASSO 3: Desenhar overlay (Layer One - morcegos)
     if (layersLoaded.one && layerOne && layerOne.complete) {
         console.log('🦇 Desenhando Layer One (overlay) - imagem carregada');
         ctx.globalCompositeOperation = 'source-over';
-        ctx.drawImage(layerOne, 0, 0, size, size);
+
+        if (selectedFormat === 'portrait') {
+            // Para retrato: desenhar overlay quadrado no centro
+            const squareSize = 1080;
+            const yOffset = (height - squareSize) / 2;
+            ctx.drawImage(layerOne, 0, yOffset, squareSize, squareSize);
+        } else {
+            // Quadrado normal
+            ctx.drawImage(layerOne, 0, 0, width, height);
+        }
     } else {
         console.log('🦇 Desenhando overlay (fallback) - gerando elementos dinamicamente');
-        drawBatsFallback(ctx, size, theme);
+        drawBatsFallback(ctx, width, height, theme);
     }
 
     console.log('✅ Composição finalizada com sucesso!');
@@ -355,36 +399,41 @@ function applyFrameLocally() {
 }
 
 // Funções de desenho de frames
-function drawCenterFrame(size) {
+function drawCenterFrame(width, height) {
+    const centerX = width / 2;
+    const centerY = height / 2;
+    const radius = Math.min(width, height) * 0.35;
+
     ctx.save();
     ctx.beginPath();
-    ctx.arc(size / 2, size / 2, size * 0.35, 0, Math.PI * 2);
+    ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
     ctx.closePath();
     ctx.clip();
 
-    const circleSize = size * 0.7;
+    const circleSize = radius * 2;
     const imgScale = Math.max(circleSize / uploadedImage.width, circleSize / uploadedImage.height);
-    const imgX = (size - uploadedImage.width * imgScale) / 2;
-    const imgY = (size - uploadedImage.height * imgScale) / 2;
+    const imgX = centerX - (uploadedImage.width * imgScale) / 2;
+    const imgY = centerY - (uploadedImage.height * imgScale) / 2;
 
     ctx.drawImage(uploadedImage, imgX, imgY,
         uploadedImage.width * imgScale, uploadedImage.height * imgScale);
     ctx.restore();
 
     ctx.beginPath();
-    ctx.arc(size / 2, size / 2, size * 0.35, 0, Math.PI * 2);
+    ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
     ctx.strokeStyle = 'white';
     ctx.lineWidth = 8;
     ctx.stroke();
 }
 
-function drawFullFrame(size, x, y, scale) {
+function drawFullFrame(width, height, x, y, scale) {
     ctx.globalAlpha = 0.7;
     ctx.drawImage(uploadedImage, x, y, uploadedImage.width * scale, uploadedImage.height * scale);
     ctx.globalAlpha = 1.0;
 }
 
-function drawTopLeftFrame(size) {
+function drawTopLeftFrame(width, height) {
+    const size = Math.min(width, height);
     const cornerSize = size * 0.4;
     ctx.save();
     ctx.beginPath();
@@ -408,7 +457,8 @@ function drawTopLeftFrame(size) {
 }
 
 // Fallback: desenhar morcegos e elementos manualmente
-function drawBatsFallback(ctx, size, theme) {
+function drawBatsFallback(ctx, width, height, theme) {
+    const size = Math.min(width, height); // Usar o menor para manter proporções
     const batPositions = [
         {x: 0.15, y: 0.12, scale: 0.08},
         {x: 0.08, y: 0.35, scale: 0.09},
@@ -652,4 +702,7 @@ resetBtn.addEventListener('click', () => {
     resetBtn.style.display = 'none';
     frameOptions.forEach(opt => opt.classList.remove('selected'));
     document.querySelector('[data-frame="center"]').classList.add('selected');
+    formatOptions.forEach(opt => opt.classList.remove('selected'));
+    document.querySelector('[data-format="square"]').classList.add('selected');
+    selectedFormat = 'square';
 });
