@@ -44,8 +44,11 @@ const THEMES = {
             gradient: 'linear-gradient(135deg, #E40303 0%, #FF8C00 16%, #FFED00 32%, #008026 48%, #24408E 64%, #732982 80%, #8B00FF 100%)'
         },
         description: 'Celebre o Orgulho LGBTQIA+ com arco-íris',
-        featured: true
-        // Removido restrição sazonal - tema disponível o ano todo
+        featured: true,
+        available: {
+            start: '06-01', // 1º de outubro
+            end: '06-30'    // 31 de outubro
+        }    
     },
 
     dark_mode: {
@@ -61,7 +64,11 @@ const THEMES = {
             gradient: 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)'
         },
         description: 'Tema escuro elegante e moderno',
-        featured: false
+        featured: false,
+        available: {
+            start: '10-01', // 1º de outubro
+            end: '10-31'    // 31 de outubro
+        }   
     },
 
     halloween: {
@@ -117,7 +124,11 @@ const THEMES = {
             gradient: 'linear-gradient(135deg, #0a0a0a 0%, #2F4F2F 50%, #8B0000 100%)'
         },
         description: 'Tema apocalipse zumbi com tons verdes e sangue',
-        featured: false
+        featured: false,
+        available: {
+            start: '10-01', // 1º de outubro
+            end: '10-31'    // 31 de outubro
+        }
     },
 
     morcegos: {
@@ -133,7 +144,11 @@ const THEMES = {
             gradient: 'linear-gradient(135deg, #FFFFFF 0%, #F0F0F0 100%)'
         },
         description: 'Tema minimalista com morcegos pretos e aranhas',
-        featured: false
+        featured: false,
+        available: {
+            start: '10-01', // 1º de outubro
+            end: '10-31'    // 31 de outubro
+        }
     },
 
     brasil: {
