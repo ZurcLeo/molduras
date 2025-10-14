@@ -279,23 +279,39 @@ button {
     display: none;
 }
 
-#downloadBtn {
-    background: linear-gradient(135deg, #FDB813 0%, #FF6B00 100%);
+/* Botão Salvar Imagem (primário) */
+.btn-primary, #downloadBtn {
+    background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
     color: white;
+    box-shadow: 0 4px 10px rgba(46, 125, 50, 0.3);
 }
 
-#downloadBtn:hover {
+.btn-primary:hover, #downloadBtn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(255, 107, 0, 0.4);
+    box-shadow: 0 6px 20px rgba(46, 125, 50, 0.5);
 }
 
-#resetBtn {
+/* Botão Compartilhar (secundário) */
+.btn-secondary, #shareBtn {
+    background: linear-gradient(135deg, #2196F3 0%, #1565C0 100%);
+    color: white;
+    box-shadow: 0 4px 10px rgba(21, 101, 192, 0.3);
+}
+
+.btn-secondary:hover, #shareBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(21, 101, 192, 0.5);
+}
+
+/* Botão Reset */
+.btn-reset, #resetBtn {
     background: #e0e0e0;
     color: #333;
 }
 
-#resetBtn:hover {
+.btn-reset:hover, #resetBtn:hover {
     background: #d0d0d0;
+    transform: translateY(-2px);
 }
 
 .instructions {

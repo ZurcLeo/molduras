@@ -118,6 +118,38 @@ const THEMES = {
         },
         description: 'Tema apocalipse zumbi com tons verdes e sangue',
         featured: false
+    },
+
+    morcegos: {
+        id: 'morcegos',
+        name: 'Morcegos',
+        emoji: '🦇',
+        background: 'assets/themes/morcegos/background.png',
+        overlay: 'assets/themes/morcegos/overlay.png',
+        preview: 'assets/themes/morcegos/preview.jpg',
+        colors: {
+            primary: '#000000',
+            secondary: '#FFFFFF',
+            gradient: 'linear-gradient(135deg, #FFFFFF 0%, #F0F0F0 100%)'
+        },
+        description: 'Tema minimalista com morcegos pretos e aranhas',
+        featured: false
+    },
+
+    brasil: {
+        id: 'brasil',
+        name: 'Brasil',
+        emoji: '🇧🇷',
+        background: 'assets/themes/brasil/background.png',
+        overlay: 'assets/themes/brasil/overlay.png',
+        preview: 'assets/themes/brasil/preview.jpg',
+        colors: {
+            primary: '#009B3A',
+            secondary: '#FEDF00',
+            gradient: 'linear-gradient(135deg, #009B3A 0%, #FEDF00 100%)'
+        },
+        description: 'Celebre a fauna brasileira com verde e amarelo',
+        featured: true
     }
 };
 

@@ -4,6 +4,7 @@ const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 const canvasContainer = document.getElementById('canvasContainer');
 const downloadBtn = document.getElementById('downloadBtn');
+const shareBtn = document.getElementById('shareBtn');
 const resetBtn = document.getElementById('resetBtn');
 const frameOptions = document.querySelectorAll('.frame-option');
 const loading = document.getElementById('loading');
@@ -344,6 +345,12 @@ function applyFrameLocally() {
     loading.style.display = 'none';
     canvasContainer.style.display = 'block';
     downloadBtn.style.display = 'inline-block';
+
+    // Mostrar botão de compartilhamento apenas em mobile
+    if (isMobile()) {
+        shareBtn.style.display = 'inline-block';
+    }
+
     resetBtn.style.display = 'inline-block';
 }
 
@@ -473,6 +480,73 @@ function drawBatsFallback(ctx, size, theme) {
         ctx.arc(size * 0.83, size * 0.13, size * 0.04, 0, Math.PI * 2);
         ctx.fillStyle = '#FF1493';
         ctx.fill();
+    } else if (theme.id === 'zumbis') {
+        ctx.fillStyle = '#8B0000';
+        ctx.fillText('APOCALIPSE', size * 0.95, size * 0.88);
+        ctx.font = `bold ${size * 0.055}px Arial`;
+        ctx.fillStyle = '#39FF14';
+        ctx.fillText('ZUMBI', size * 0.95, size * 0.945);
+
+        // Mão de zumbi (canto inferior esquerdo)
+        ctx.fillStyle = '#556B2F';
+        ctx.fillRect(size * 0.02, size * 0.85, size * 0.08, size * 0.05);
+
+        // Círculo LIVE tóxico
+        ctx.beginPath();
+        ctx.arc(size * 0.82, size * 0.925, size * 0.015, 0, Math.PI * 2);
+        ctx.fillStyle = '#39FF14';
+        ctx.fill();
+        ctx.strokeStyle = '#8B0000';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+    } else if (theme.id === 'morcegos') {
+        ctx.fillStyle = 'black';
+        ctx.fillText('HORNET', size * 0.95, size * 0.88);
+        ctx.font = `bold ${size * 0.055}px Arial`;
+        ctx.fillText('LIVE', size * 0.95, size * 0.945);
+
+        // Círculo LIVE
+        ctx.beginPath();
+        ctx.arc(size * 0.82, size * 0.925, size * 0.015, 0, Math.PI * 2);
+        ctx.fillStyle = '#000000';
+        ctx.fill();
+        ctx.strokeStyle = 'white';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+    } else if (theme.id === 'brasil') {
+        ctx.fillStyle = '#FEDF00';
+        ctx.fillText('BRASIL', size * 0.95, size * 0.88);
+        ctx.font = `bold ${size * 0.055}px Arial`;
+        ctx.fillStyle = 'white';
+        ctx.fillText('LIVE', size * 0.95, size * 0.945);
+
+        // Estrelas (estilo bandeira)
+        const drawStar = (x, y, radius, color) => {
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            for (let i = 0; i < 5; i++) {
+                const angle = (i * 4 * Math.PI) / 5 - Math.PI / 2;
+                const px = x + Math.cos(angle) * radius;
+                const py = y + Math.sin(angle) * radius;
+                if (i === 0) ctx.moveTo(px, py);
+                else ctx.lineTo(px, py);
+            }
+            ctx.closePath();
+            ctx.fill();
+        };
+
+        drawStar(size * 0.15, size * 0.15, size * 0.03, '#FEDF00');
+        drawStar(size * 0.85, size * 0.20, size * 0.025, '#009B3A');
+        drawStar(size * 0.12, size * 0.85, size * 0.028, '#002776');
+
+        // Círculo LIVE
+        ctx.beginPath();
+        ctx.arc(size * 0.82, size * 0.925, size * 0.015, 0, Math.PI * 2);
+        ctx.fillStyle = '#FEDF00';
+        ctx.fill();
+        ctx.strokeStyle = '#009B3A';
+        ctx.lineWidth = 2;
+        ctx.stroke();
     } else {
         // Hornet Brasil (padrão)
         ctx.fillText('HORNET', size * 0.95, size * 0.88);
@@ -501,15 +575,41 @@ function isMobile() {
     return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 }
 
-// Função para salvar/compartilhar imagem
-async function downloadImage() {
+// Função para SALVAR imagem (download direto)
+function downloadImage() {
     const theme = getThemeById(selectedTheme);
     const filename = `hornet-${theme.id}-perfil.png`;
 
+    console.log('💾 Iniciando download direto da imagem...');
+
+    // Converter canvas para blob
+    canvas.toBlob((blob) => {
+        // Download tradicional (funciona em todos os dispositivos)
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.download = filename;
+        link.href = url;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        // Limpar URL temporária
+        setTimeout(() => URL.revokeObjectURL(url), 100);
+
+        console.log('✓ Download iniciado com sucesso!');
+    }, 'image/png');
+}
+
+// Função para COMPARTILHAR imagem (Web Share API)
+async function shareImage() {
+    const theme = getThemeById(selectedTheme);
+    const filename = `hornet-${theme.id}-perfil.png`;
+
+    console.log('📤 Iniciando compartilhamento via Web Share API...');
+
     // Converter canvas para blob
     canvas.toBlob(async (blob) => {
-        // Tentar usar Web Share API (mobile) para salvar nas fotos
-        if (isMobile() && navigator.canShare) {
+        if (navigator.canShare) {
             const file = new File([blob], filename, { type: 'image/png' });
 
             if (navigator.canShare({ files: [file] })) {
@@ -517,38 +617,38 @@ async function downloadImage() {
                     await navigator.share({
                         files: [file],
                         title: 'Foto com Moldura Hornet',
-                        text: 'Minha foto com moldura personalizada'
+                        text: 'Minha foto com moldura personalizada! 🐝'
                     });
                     console.log('✓ Imagem compartilhada com sucesso');
-                    return;
                 } catch (err) {
-                    if (err.name !== 'AbortError') {
-                        console.warn('⚠️ Compartilhamento cancelado ou não suportado:', err);
+                    if (err.name === 'AbortError') {
+                        console.log('ℹ️ Compartilhamento cancelado pelo usuário');
+                    } else {
+                        console.error('❌ Erro ao compartilhar:', err);
+                        alert('Não foi possível compartilhar. Use o botão "Salvar Imagem".');
                     }
-                    // Continuar para download tradicional
                 }
+            } else {
+                console.warn('⚠️ Web Share API não suporta compartilhar arquivos');
+                alert('Compartilhamento não disponível. Use o botão "Salvar Imagem".');
             }
+        } else {
+            console.warn('⚠️ Web Share API não disponível neste dispositivo');
+            alert('Compartilhamento não disponível. Use o botão "Salvar Imagem".');
         }
-
-        // Fallback: download tradicional
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.download = filename;
-        link.href = url;
-        link.click();
-
-        // Limpar URL temporária
-        setTimeout(() => URL.revokeObjectURL(url), 100);
     }, 'image/png');
 }
 
+// Event listeners
 downloadBtn.addEventListener('click', downloadImage);
+shareBtn.addEventListener('click', shareImage);
 
 resetBtn.addEventListener('click', () => {
     uploadedImage = null;
     fileInput.value = '';
     canvasContainer.style.display = 'none';
     downloadBtn.style.display = 'none';
+    shareBtn.style.display = 'none';
     resetBtn.style.display = 'none';
     frameOptions.forEach(opt => opt.classList.remove('selected'));
     document.querySelector('[data-frame="center"]').classList.add('selected');
