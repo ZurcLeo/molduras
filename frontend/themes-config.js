@@ -16,7 +16,7 @@
 const THEMES = {
     hornet_brasil: {
         id: 'hornet_brasil',
-        name: 'Hornet Brasil',
+        name: 'Fantasmas',
         emoji: '🧡',
         background: 'assets/themes/hornet_brasil/background.png',
         overlay: 'assets/themes/hornet_brasil/overlay.png',
@@ -33,7 +33,7 @@ const THEMES = {
 
     pride_month: {
         id: 'pride_month',
-        name: 'Pride Month',
+        name: 'Mês do Orgulho',
         emoji: '🏳️‍🌈',
         background: 'assets/themes/pride_month/background.png',
         overlay: 'assets/themes/pride_month/overlay.png',
@@ -50,7 +50,7 @@ const THEMES = {
 
     dark_mode: {
         id: 'dark_mode',
-        name: 'Dark Mode',
+        name: 'Abóboras',
         emoji: '🌙',
         background: 'assets/themes/dark_mode/background.png',
         overlay: 'assets/themes/dark_mode/overlay.png',
@@ -66,7 +66,7 @@ const THEMES = {
 
     halloween: {
         id: 'halloween',
-        name: 'Halloween',
+        name: 'Aranhas',
         emoji: '🎃',
         background: 'assets/themes/halloween/background.png',
         overlay: 'assets/themes/halloween/overlay.png',
