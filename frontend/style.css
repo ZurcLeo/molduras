@@ -39,6 +39,67 @@ h1 {
     font-size: 1.1em;
 }
 
+/* Seletor de Região */
+.region-selector-section {
+    margin-bottom: 30px;
+    padding: 20px;
+    background: #f9f9f9;
+    border-radius: 15px;
+    border: 2px solid #e0e0e0;
+}
+
+.region-selector-label {
+    font-size: 1.2em;
+    color: #1a1a1a;
+    margin-bottom: 15px;
+    font-weight: 600;
+    text-align: center;
+}
+
+.region-selector-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 12px;
+}
+
+.region-option {
+    border: 3px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 12px 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-align: center;
+    background: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.region-option:hover {
+    border-color: #FDB813;
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(253, 184, 19, 0.3);
+}
+
+.region-option.selected {
+    border-color: #FF6B00;
+    background: #fff9e6;
+    box-shadow: 0 5px 20px rgba(255, 107, 0, 0.4);
+}
+
+.region-flag {
+    font-size: 2.5em;
+    line-height: 1;
+}
+
+.region-name {
+    font-weight: 600;
+    color: #1a1a1a;
+    font-size: 0.85em;
+    line-height: 1.2;
+}
+
 .upload-section {
     border: 3px dashed #FDB813;
     border-radius: 15px;
@@ -229,6 +290,50 @@ h1 {
     align-items: center;
     justify-content: center;
     font-size: 2em;
+}
+
+/* Seção de Posição do Logo */
+.logo-position-section {
+    margin-bottom: 30px;
+}
+
+.logo-position-title {
+    font-size: 1.3em;
+    color: #1a1a1a;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.logo-position-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+}
+
+.logo-position-option {
+    border: 3px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 15px;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-align: center;
+    background: white;
+}
+
+.logo-position-option:hover {
+    border-color: #FDB813;
+    transform: scale(1.05);
+}
+
+.logo-position-option.selected {
+    border-color: #FF6B00;
+    background: #fff9e6;
+    box-shadow: 0 5px 15px rgba(255, 107, 0, 0.3);
+}
+
+.position-preview {
+    font-size: 2.5em;
+    margin-bottom: 10px;
 }
 
 /* Seção de Molduras (Frames) */

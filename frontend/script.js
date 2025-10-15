@@ -10,14 +10,21 @@ const frameOptions = document.querySelectorAll('.frame-option');
 const formatOptions = document.querySelectorAll('.format-option');
 const loading = document.getElementById('loading');
 const themesGrid = document.getElementById('themesGrid');
+const regionSelectorGrid = document.getElementById('regionSelectorGrid');
+const headerTitle = document.getElementById('headerTitle');
 
 let uploadedImage = null;
 let selectedFrame = 'center';
 let selectedFormat = 'square';
 let selectedTheme = DEFAULT_THEME;
+let selectedRegion = null; // Será definido na inicialização
+let selectedLogoPosition = 'bottom-right'; // Posição padrão do logo
 
 // Cache de imagens por tema
 let themeImages = {};
+
+// Cache de logos regionais
+let regionLogos = {};
 
 // Imagens do tema atual
 let layerOne = new Image(); // Morcegos/overlay (fundo transparente)
@@ -28,19 +35,142 @@ let layersLoaded = { one: false, two: false };
 // INICIALIZAÇÃO
 // =====================================
 
-window.addEventListener('DOMContentLoaded', () => {
+window.addEventListener('DOMContentLoaded', async () => {
+    // Detectar região ativa (URL > localStorage > Padrão)
+    selectedRegion = getActiveRegion();
+    console.log(`🌍 Região ativa: ${selectedRegion.name}`);
+
+    // Inicializar sistema de i18n com locale da região
+    if (window.i18n) {
+        await window.i18n.initI18n(selectedRegion.locale);
+    }
+
+    // Renderizar seletor de regiões
+    renderRegions();
+
+    // Atualizar interface para a região
+    updateRegionInterface(selectedRegion);
+
+    // Pré-carregar logo da região ativa
+    await preloadRegionLogo(selectedRegion);
+
+    // Renderizar temas da região
     renderThemes();
-    loadTheme(DEFAULT_THEME);
+
+    // Carregar tema padrão da região
+    const defaultTheme = getDefaultThemeForRegion(selectedRegion.id);
+    selectedTheme = defaultTheme.id;
+    loadTheme(defaultTheme.id);
 });
+
+// =====================================
+// RENDERIZAÇÃO DE REGIÕES
+// =====================================
+
+function renderRegions() {
+    const allRegions = getAllRegions();
+    regionSelectorGrid.innerHTML = '';
+
+    allRegions.forEach(region => {
+        const regionOption = createRegionElement(region);
+        regionSelectorGrid.appendChild(regionOption);
+    });
+}
+
+function createRegionElement(region) {
+    const div = document.createElement('div');
+    div.className = `region-option ${region.id === selectedRegion.id ? 'selected' : ''}`;
+    div.dataset.region = region.id;
+
+    const flag = document.createElement('div');
+    flag.className = 'region-flag';
+    flag.textContent = region.flag;
+
+    const name = document.createElement('div');
+    name.className = 'region-name';
+    name.textContent = region.name;
+
+    div.appendChild(flag);
+    div.appendChild(name);
+
+    // Event listener para troca de região
+    div.addEventListener('click', () => {
+        changeRegion(region);
+    });
+
+    return div;
+}
+
+async function changeRegion(region) {
+    console.log(`🌍 Mudando região para: ${region.name}`);
+
+    // Atualizar região selecionada
+    selectedRegion = region;
+
+    // Salvar no localStorage
+    saveSelectedRegion(region.id);
+
+    // Alterar idioma baseado no locale da região
+    if (window.i18n) {
+        await window.i18n.changeLocale(region.locale);
+    }
+
+    // Pré-carregar logo da região (se existir)
+    await preloadRegionLogo(region);
+
+    // Atualizar interface
+    document.querySelectorAll('.region-option').forEach(opt =>
+        opt.classList.remove('selected')
+    );
+    document.querySelector(`[data-region="${region.id}"]`).classList.add('selected');
+
+    // Atualizar header e cores
+    updateRegionInterface(region);
+
+    // Renderizar temas da nova região
+    renderThemes();
+
+    // Carregar tema padrão da nova região
+    const defaultTheme = getDefaultThemeForRegion(region.id);
+    selectedTheme = defaultTheme.id;
+    loadTheme(defaultTheme.id);
+}
+
+function updateRegionInterface(region) {
+    // Atualizar título do header (será atualizado pelo i18n)
+    const emoji = region.emoji;
+
+    // Usar tradução se disponível, senão usar texto padrão
+    if (window.i18n && window.i18n.t) {
+        const translatedTitle = window.i18n.t('header.title');
+        // Adiciona emoji se não estiver na tradução
+        headerTitle.textContent = translatedTitle.includes(emoji)
+            ? translatedTitle
+            : `${emoji} ${translatedTitle}`;
+    } else {
+        headerTitle.textContent = `${emoji} Gerador de Molduras ${region.name}`;
+    }
+
+    // Atualizar cores do gradiente de fundo
+    if (region.colors) {
+        document.body.style.background = region.colors.gradient;
+    }
+}
 
 // =====================================
 // RENDERIZAÇÃO DE TEMAS
 // =====================================
 
 function renderThemes() {
-    const availableThemes = getAvailableThemes();
+    // Usar temas disponíveis para a região selecionada
+    const availableThemes = getAvailableThemesForRegion(selectedRegion.id);
 
     themesGrid.innerHTML = '';
+
+    if (availableThemes.length === 0) {
+        themesGrid.innerHTML = '<p style="grid-column: 1/-1; text-align:center; color:#999;">Nenhum tema disponível para esta região.</p>';
+        return;
+    }
 
     availableThemes.forEach(theme => {
         const themeOption = createThemeElement(theme);
@@ -50,7 +180,8 @@ function renderThemes() {
 
 function createThemeElement(theme) {
     const div = document.createElement('div');
-    div.className = `theme-option ${theme.id === DEFAULT_THEME ? 'selected' : ''}`;
+    // Marcar como selecionado se for o tema atual
+    div.className = `theme-option ${theme.id === selectedTheme ? 'selected' : ''}`;
     div.dataset.theme = theme.id;
 
     const preview = document.createElement('div');
@@ -101,6 +232,51 @@ function createThemeElement(theme) {
     });
 
     return div;
+}
+
+// =====================================
+// CARREGAMENTO DE LOGOS REGIONAIS
+// =====================================
+
+/**
+ * Pré-carrega o logo PNG de uma região
+ * @param {Object} region - Objeto da região
+ * @returns {Promise<Image|null>} - Imagem carregada ou null se falhar
+ */
+async function preloadRegionLogo(region) {
+    // Se já está em cache, retorna
+    if (regionLogos[region.id]) {
+        console.log(`📦 Logo da região ${region.id} carregado do cache`);
+        return regionLogos[region.id];
+    }
+
+    // Se não tem imagePath configurado, retorna null (usará fallback de texto)
+    if (!region.branding?.logo?.imagePath) {
+        console.log(`ℹ️ Região ${region.id} não tem logo PNG configurado`);
+        return null;
+    }
+
+    const logoPath = region.branding.logo.imagePath;
+    console.log(`⬇️ Baixando logo da região ${region.id}: ${logoPath}`);
+
+    return new Promise((resolve) => {
+        const logoImage = new Image();
+        logoImage.crossOrigin = "anonymous";
+
+        logoImage.onload = () => {
+            console.log(`✓ Logo da região ${region.id} carregado com sucesso`);
+            regionLogos[region.id] = logoImage;
+            resolve(logoImage);
+        };
+
+        logoImage.onerror = () => {
+            console.warn(`⚠️ Logo da região ${region.id} não encontrado (404) - usando fallback de texto`);
+            regionLogos[region.id] = null;
+            resolve(null);
+        };
+
+        logoImage.src = logoPath;
+    });
 }
 
 // =====================================
@@ -267,6 +443,24 @@ formatOptions.forEach(option => {
 });
 
 // =====================================
+// SELEÇÃO DE POSIÇÃO DO LOGO
+// =====================================
+
+const logoPositionOptions = document.querySelectorAll('.logo-position-option');
+
+logoPositionOptions.forEach(option => {
+    option.addEventListener('click', () => {
+        logoPositionOptions.forEach(opt => opt.classList.remove('selected'));
+        option.classList.add('selected');
+        selectedLogoPosition = option.dataset.position;
+        console.log(`📍 Posição do logo alterada para: ${selectedLogoPosition}`);
+
+        // Reaplicar moldura se já houver imagem
+        if (uploadedImage) applyFrame();
+    });
+});
+
+// =====================================
 // SELEÇÃO DE FRAME (POSICIONAMENTO)
 // =====================================
 
@@ -384,6 +578,10 @@ function applyFrameLocally() {
         drawBatsFallback(ctx, width, height, theme);
     }
 
+    // PASSO 4: Desenhar branding (logo + badge) - SEMPRE DINÂMICO
+    console.log('🏷️ Desenhando branding da região');
+    drawBranding(ctx, width, height, selectedRegion, theme);
+
     console.log('✅ Composição finalizada com sucesso!');
 
     loading.style.display = 'none';
@@ -456,9 +654,134 @@ function drawTopLeftFrame(width, height) {
     ctx.stroke();
 }
 
-// Fallback: desenhar morcegos e elementos manualmente
+/**
+ * Desenha branding dinâmico (logo + badge) baseado na região e tema
+ * NOVA ARQUITETURA: Separação entre elementos decorativos e branding
+ * Suporta logos PNG posicionáveis nos 4 cantos
+ *
+ * @param {CanvasRenderingContext2D} ctx - Contexto do canvas
+ * @param {Number} width - Largura do canvas
+ * @param {Number} height - Altura do canvas
+ * @param {Object} region - Objeto da região ativa
+ * @param {Object} theme - Objeto do tema ativo
+ */
+function drawBranding(ctx, width, height, region, theme) {
+    const size = Math.min(width, height);
+
+    // Mesclar branding da região com override do tema (se existir)
+    const branding = {
+        ...region.branding,
+        ...(theme.brandingOverride || {})
+    };
+
+    // Mesclar configurações de logo
+    const logo = {
+        ...region.branding.logo,
+        ...(theme.brandingOverride?.logo || {})
+    };
+
+    // Mesclar configurações de badge
+    const badge = {
+        ...region.branding.badge,
+        ...(theme.brandingOverride?.badge || {})
+    };
+
+    // ===== DESENHAR LOGO PNG (se disponível) =====
+    const logoImage = regionLogos[region.id];
+
+    if (logoImage && logoImage.complete && logo.imagePath) {
+        console.log(`🖼️ Desenhando logo PNG da região ${region.id} em ${selectedLogoPosition}`);
+
+        // Calcular dimensões do logo
+        const logoWidth = width * (logo.imageWidth || 0.25);
+        const logoHeight = (logoImage.height / logoImage.width) * logoWidth;
+        const margin = width * (logo.margin || 0.02);
+
+        // Calcular posição baseado na escolha do usuário
+        let x, y;
+        switch (selectedLogoPosition) {
+            case 'top-left':
+                x = margin;
+                y = margin;
+                break;
+            case 'top-right':
+                x = width - logoWidth - margin;
+                y = margin;
+                break;
+            case 'bottom-left':
+                x = margin;
+                y = height - logoHeight - margin;
+                break;
+            case 'bottom-right':
+            default:
+                x = width - logoWidth - margin;
+                y = height - logoHeight - margin;
+        }
+
+        // Desenhar logo PNG
+        ctx.drawImage(logoImage, x, y, logoWidth, logoHeight);
+
+        console.log(`✓ Logo PNG desenhado em (${x.toFixed(0)}, ${y.toFixed(0)}) - ${logoWidth.toFixed(0)}x${logoHeight.toFixed(0)}px`);
+    }
+    // ===== FALLBACK: DESENHAR LOGO DE TEXTO =====
+    else if (logo && logo.text) {
+        console.log(`📝 Desenhando logo de texto (fallback) da região ${region.id}`);
+
+        ctx.textAlign = logo.textAlign || 'right';
+        const posX = size * (logo.position?.x || 0.95);
+        let posY = size * (logo.position?.y || 0.88);
+
+        // Linha 1: Texto principal (ex: "HORNET")
+        if (logo.text[0]) {
+            ctx.fillStyle = logo.colors?.primary || 'white';
+            ctx.font = `bold ${size * (logo.fontSize?.main || 0.04)}px Arial`;
+            ctx.fillText(logo.text[0], posX, posY);
+            posY += size * 0.05; // Espaçamento
+        }
+
+        // Linha 2: Texto secundário (ex: "LIVE")
+        if (logo.text[1]) {
+            ctx.fillStyle = logo.colors?.secondary || 'white';
+            ctx.font = `bold ${size * (logo.fontSize?.secondary || 0.055)}px Arial`;
+            ctx.fillText(logo.text[1], posX, posY);
+            posY += size * 0.04; // Espaçamento
+        }
+
+        // Linha 3: Subtexto (ex: "BRASIL", "TÜRKIYE")
+        if (logo.subtext) {
+            ctx.fillStyle = logo.colors?.primary || 'white';
+            ctx.font = `${size * (logo.fontSize?.sub || 0.03)}px Arial`;
+            ctx.fillText(logo.subtext, posX, posY);
+        }
+    }
+
+    // ===== DESENHAR BADGE (círculo "LIVE") =====
+    if (badge && badge.show) {
+        const badgeX = size * (badge.position?.x || 0.82);
+        const badgeY = size * (badge.position?.y || 0.925);
+        const badgeRadius = size * (badge.radius || 0.015);
+
+        ctx.beginPath();
+        ctx.arc(badgeX, badgeY, badgeRadius, 0, Math.PI * 2);
+        ctx.fillStyle = badge.fillColor || '#FF6B00';
+        ctx.fill();
+
+        if (badge.strokeColor) {
+            ctx.strokeStyle = badge.strokeColor;
+            ctx.lineWidth = badge.strokeWidth || 2;
+            ctx.stroke();
+        }
+    }
+}
+
+/**
+ * Fallback: desenhar elementos decorativos manualmente quando PNG não está disponível
+ * NOTA: Branding (logo/badge) agora é desenhado separadamente pela função drawBranding()
+ */
 function drawBatsFallback(ctx, width, height, theme) {
-    const size = Math.min(width, height); // Usar o menor para manter proporções
+    const size = Math.min(width, height);
+
+    // Posições dos morcegos decorativos
     const batPositions = [
         {x: 0.15, y: 0.12, scale: 0.08},
         {x: 0.08, y: 0.35, scale: 0.09},
@@ -471,11 +794,12 @@ function drawBatsFallback(ctx, width, height, theme) {
     // Cor dos morcegos baseada no tema
     let batColor = '#1a1a1a';
     if (theme.id === 'dark_mode') {
-        batColor = '#cccccc'; // Morcegos claros no tema escuro
+        batColor = '#cccccc';
     } else if (theme.id === 'halloween') {
-        batColor = '#FF6600'; // Morcegos laranjas no Halloween
+        batColor = '#FF6600';
     }
 
+    // Desenhar morcegos decorativos
     ctx.fillStyle = batColor;
     batPositions.forEach(pos => {
         const batSize = size * pos.scale;
@@ -484,92 +808,41 @@ function drawBatsFallback(ctx, width, height, theme) {
 
         ctx.save();
         ctx.translate(batX, batY);
+
+        // Corpo do morcego
         ctx.beginPath();
         ctx.ellipse(0, 0, batSize * 0.3, batSize * 0.4, 0, 0, Math.PI * 2);
         ctx.fill();
+
+        // Asa esquerda
         ctx.beginPath();
         ctx.moveTo(-batSize * 0.3, 0);
         ctx.quadraticCurveTo(-batSize * 0.6, -batSize * 0.4, -batSize * 0.8, -batSize * 0.2);
         ctx.quadraticCurveTo(-batSize * 0.6, 0, -batSize * 0.3, 0);
         ctx.fill();
+
+        // Asa direita
         ctx.beginPath();
         ctx.moveTo(batSize * 0.3, 0);
         ctx.quadraticCurveTo(batSize * 0.6, -batSize * 0.4, batSize * 0.8, -batSize * 0.2);
         ctx.quadraticCurveTo(batSize * 0.6, 0, batSize * 0.3, 0);
         ctx.fill();
+
         ctx.restore();
     });
 
-    // Logo baseado no tema
-    ctx.fillStyle = 'white';
-    ctx.font = `bold ${size * 0.04}px Arial`;
-    ctx.textAlign = 'right';
-
-    if (theme.id === 'halloween') {
-        ctx.fillStyle = '#FF6600';
-        ctx.fillText('HAPPY', size * 0.95, size * 0.88);
-        ctx.font = `bold ${size * 0.055}px Arial`;
-        ctx.fillText('HALLOWEEN', size * 0.95, size * 0.945);
-    } else if (theme.id === 'pride_month') {
-        ctx.fillText('PRIDE', size * 0.95, size * 0.88);
-        ctx.font = `bold ${size * 0.055}px Arial`;
-        ctx.fillText('MONTH', size * 0.95, size * 0.945);
-    } else if (theme.id === 'dark_mode') {
-        ctx.fillStyle = '#FF6B00';
-        ctx.fillText('DARK', size * 0.95, size * 0.88);
-        ctx.font = `bold ${size * 0.055}px Arial`;
-        ctx.fillText('MODE', size * 0.95, size * 0.945);
-    } else if (theme.id === 'outubro_rosa') {
-        ctx.fillStyle = 'white';
-        ctx.fillText('OUTUBRO', size * 0.95, size * 0.88);
-        ctx.font = `bold ${size * 0.055}px Arial`;
-        ctx.fillText('ROSA', size * 0.95, size * 0.945);
-
-        // Desenhar laço rosa (símbolo da campanha)
+    // Elementos decorativos específicos de alguns temas
+    if (theme.id === 'outubro_rosa') {
+        // Laço rosa (símbolo da campanha)
         ctx.beginPath();
         ctx.arc(size * 0.83, size * 0.13, size * 0.04, 0, Math.PI * 2);
         ctx.fillStyle = '#FF1493';
         ctx.fill();
     } else if (theme.id === 'zumbis') {
-        ctx.fillStyle = '#8B0000';
-        ctx.fillText('APOCALIPSE', size * 0.95, size * 0.88);
-        ctx.font = `bold ${size * 0.055}px Arial`;
-        ctx.fillStyle = '#39FF14';
-        ctx.fillText('ZUMBI', size * 0.95, size * 0.945);
-
         // Mão de zumbi (canto inferior esquerdo)
         ctx.fillStyle = '#556B2F';
         ctx.fillRect(size * 0.02, size * 0.85, size * 0.08, size * 0.05);
-
-        // Círculo LIVE tóxico
-        ctx.beginPath();
-        ctx.arc(size * 0.82, size * 0.925, size * 0.015, 0, Math.PI * 2);
-        ctx.fillStyle = '#39FF14';
-        ctx.fill();
-        ctx.strokeStyle = '#8B0000';
-        ctx.lineWidth = 2;
-        ctx.stroke();
-    } else if (theme.id === 'morcegos') {
-        ctx.fillStyle = 'black';
-        ctx.fillText('HORNET', size * 0.95, size * 0.88);
-        ctx.font = `bold ${size * 0.055}px Arial`;
-        ctx.fillText('LIVE', size * 0.95, size * 0.945);
-
-        // Círculo LIVE
-        ctx.beginPath();
-        ctx.arc(size * 0.82, size * 0.925, size * 0.015, 0, Math.PI * 2);
-        ctx.fillStyle = '#000000';
-        ctx.fill();
-        ctx.strokeStyle = 'white';
-        ctx.lineWidth = 2;
-        ctx.stroke();
     } else if (theme.id === 'brasil') {
-        ctx.fillStyle = '#FEDF00';
-        ctx.fillText('BRASIL', size * 0.95, size * 0.88);
-        ctx.font = `bold ${size * 0.055}px Arial`;
-        ctx.fillStyle = 'white';
-        ctx.fillText('LIVE', size * 0.95, size * 0.945);
-
         // Estrelas (estilo bandeira)
         const drawStar = (x, y, radius, color) => {
             ctx.fillStyle = color;
@@ -588,32 +861,10 @@ function drawBatsFallback(ctx, width, height, theme) {
         drawStar(size * 0.15, size * 0.15, size * 0.03, '#FEDF00');
         drawStar(size * 0.85, size * 0.20, size * 0.025, '#009B3A');
         drawStar(size * 0.12, size * 0.85, size * 0.028, '#002776');
-
-        // Círculo LIVE
-        ctx.beginPath();
-        ctx.arc(size * 0.82, size * 0.925, size * 0.015, 0, Math.PI * 2);
-        ctx.fillStyle = '#FEDF00';
-        ctx.fill();
-        ctx.strokeStyle = '#009B3A';
-        ctx.lineWidth = 2;
-        ctx.stroke();
-    } else {
-        // Hornet Brasil (padrão)
-        ctx.fillText('HORNET', size * 0.95, size * 0.88);
-        ctx.font = `bold ${size * 0.055}px Arial`;
-        ctx.fillText('LIVE', size * 0.95, size * 0.93);
-        ctx.font = `${size * 0.03}px Arial`;
-        ctx.fillText('BRASIL', size * 0.95, size * 0.97);
-
-        // Círculo LIVE
-        ctx.beginPath();
-        ctx.arc(size * 0.82, size * 0.925, size * 0.015, 0, Math.PI * 2);
-        ctx.fillStyle = '#FF6B00';
-        ctx.fill();
-        ctx.strokeStyle = 'white';
-        ctx.lineWidth = 2;
-        ctx.stroke();
     }
+
+    // NOTA: Logo e badge agora são desenhados pela função drawBranding()
+    // que é chamada após este fallback na função applyFrameLocally()
 }
 
 // =====================================

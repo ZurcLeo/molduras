@@ -1,9 +1,15 @@
 /**
- * Configuração de Temas do Gerador de Molduras Hornet Brasil
+ * Configuração de Temas do Gerador de Molduras Hornet
+ *
+ * Arquitetura Multi-Regional:
+ * - Suporta múltiplas regiões (Brasil, Global, Turquia, etc.)
+ * - Mantém compatibilidade total com código existente
+ * - Temas podem ser globais ou específicos de região
  *
  * Cada tema contém:
  * - id: identificador único
  * - name: nome exibido ao usuário
+ * - region: região(ões) onde o tema está disponível (array ou 'all')
  * - background: caminho para imagem de fundo (Layer Two)
  * - overlay: caminho para imagem de overlay (Layer One - morcegos/elementos)
  * - preview: caminho para miniatura de preview
@@ -14,10 +20,12 @@
  */
 
 const THEMES = {
+    // === TEMAS BRASIL ===
     hornet_brasil: {
         id: 'hornet_brasil',
         name: 'Fantasmas',
         emoji: '🧡',
+        region: ['brasil'], // Específico do Brasil
         background: 'assets/themes/hornet_brasil/background.png',
         overlay: 'assets/themes/hornet_brasil/overlay.png',
         preview: 'assets/themes/hornet_brasil/preview.jpg',
@@ -31,70 +39,28 @@ const THEMES = {
         default: true
     },
 
-    pride_month: {
-        id: 'pride_month',
-        name: 'Mês do Orgulho',
-        emoji: '🏳️‍🌈',
-        background: 'assets/themes/pride_month/background.png',
-        overlay: 'assets/themes/pride_month/overlay.png',
-        preview: 'assets/themes/pride_month/preview.jpg',
+    brasil: {
+        id: 'brasil',
+        name: 'Brasil',
+        emoji: '🇧🇷',
+        region: ['brasil'], // Específico do Brasil
+        background: 'assets/themes/brasil/background.png',
+        overlay: 'assets/themes/brasil/overlay.png',
+        preview: 'assets/themes/brasil/preview.jpg',
         colors: {
-            primary: '#1E4253',
-            secondary: '#112941',
-            gradient: 'linear-gradient(135deg, #E40303 0%, #FF8C00 16%, #FFED00 32%, #008026 48%, #24408E 64%, #732982 80%, #8B00FF 100%)'
+            primary: '#72AC47',
+            secondary: '#72AC47',
+            gradient: 'linear-gradient(135deg, #009B3A 0%, #FEDF00 100%)'
         },
-        description: 'Celebre o Orgulho LGBTQIA+ com arco-íris',
-        featured: true,
-        available: {
-            start: '06-01', // 1º de outubro
-            end: '06-30'    // 31 de outubro
-        }    
-    },
-
-    dark_mode: {
-        id: 'dark_mode',
-        name: 'Abóboras',
-        emoji: '🌙',
-        background: 'assets/themes/dark_mode/background.png',
-        overlay: 'assets/themes/dark_mode/overlay.png',
-        preview: 'assets/themes/dark_mode/preview.jpg',
-        colors: {
-            primary: '#9C00D0',
-            secondary: '#9C00D0',
-            gradient: 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)'
-        },
-        description: 'Tema escuro elegante e moderno',
-        featured: false,
-        available: {
-            start: '10-01', // 1º de outubro
-            end: '10-31'    // 31 de outubro
-        }   
-    },
-
-    halloween: {
-        id: 'halloween',
-        name: 'Aranhas',
-        emoji: '🎃',
-        background: 'assets/themes/halloween/background.png',
-        overlay: 'assets/themes/halloween/overlay.png',
-        preview: 'assets/themes/halloween/preview.jpg',
-        colors: {
-            primary: '#F25E39',
-            secondary: '#F25E39',
-            gradient: 'linear-gradient(135deg, #1a0033 0%, #8B008B 50%, #FF6600 100%)'
-        },
-        description: 'Tema especial de Halloween com cores roxas e laranjas',
-        featured: false,
-        available: {
-            start: '10-01', // 1º de outubro
-            end: '10-31'    // 31 de outubro
-        }
+        description: 'Celebre a fauna brasileira com verde e amarelo',
+        featured: true
     },
 
     outubro_rosa: {
         id: 'outubro_rosa',
         name: 'Outubro Rosa',
         emoji: '🎀',
+        region: ['brasil'], // Específico do Brasil
         background: 'assets/themes/outubro_rosa/background.png',
         overlay: 'assets/themes/outubro_rosa/overlay.png',
         preview: 'assets/themes/outubro_rosa/preview.jpg',
@@ -106,88 +72,8 @@ const THEMES = {
         description: 'Campanha de conscientização sobre câncer de mama',
         featured: true,
         available: {
-            start: '10-01', // 1º de outubro
-            end: '10-31'    // 31 de outubro
-        }
-    },
-
-    zumbis: {
-        id: 'zumbis',
-        name: 'Zumbis',
-        emoji: '🧟',
-        background: 'assets/themes/zumbis/background.png',
-        overlay: 'assets/themes/zumbis/overlay.png',
-        preview: 'assets/themes/zumbis/preview.jpg',
-        colors: {
-            primary: '#81CD11',
-            secondary: '#303836',
-            gradient: 'linear-gradient(135deg, #0a0a0a 0%, #2F4F2F 50%, #8B0000 100%)'
-        },
-        description: 'Tema apocalipse zumbi com tons verdes e sangue',
-        featured: false,
-        available: {
-            start: '10-01', // 1º de outubro
-            end: '10-31'    // 31 de outubro
-        }
-    },
-
-    morcegos: {
-        id: 'morcegos',
-        name: 'Morcegos',
-        emoji: '🦇',
-        background: 'assets/themes/morcegos/background.png',
-        overlay: 'assets/themes/morcegos/overlay.png',
-        preview: 'assets/themes/morcegos/preview.jpg',
-        colors: {
-            primary: '#F25E39',
-            secondary: '#F25E39',
-            gradient: 'linear-gradient(135deg, #FFFFFF 0%, #F0F0F0 100%)'
-        },
-        description: 'Tema minimalista com morcegos pretos e aranhas',
-        featured: false,
-        available: {
-            start: '10-01', // 1º de outubro
-            end: '10-31'    // 31 de outubro
-        }
-    },
-
-    natal: {
-        id: 'natal',
-        name: 'Natal',
-        emoji: '🎄',
-        background: 'assets/themes/natal/background.png',
-        overlay: 'assets/themes/natal/overlay.png',
-        preview: 'assets/themes/natal/preview.jpg',
-        colors: {
-            primary: '#F25E39',
-            secondary: '#F25E39',
-            gradient: 'linear-gradient(135deg, #FFFFFF 0%, #F0F0F0 100%)'
-        },
-        description: 'Tema minimalista natalino',
-        featured: false,
-        available: {
-            start: '12-01', // 1º de outubro
-            end: '12-31'    // 31 de outubro
-        }
-    },
-
-    ano_novo: {
-        id: 'ano_novo',
-        name: 'Ano Novo',
-        emoji: '✨',
-        background: 'assets/themes/ano_novo/background.png',
-        overlay: 'assets/themes/ano_novo/overlay.png',
-        preview: 'assets/themes/ano_novo/preview.jpg',
-        colors: {
-            primary: '#F25E39',
-            secondary: '#F25E39',
-            gradient: 'linear-gradient(135deg, #FFFFFF 0%, #F0F0F0 100%)'
-        },
-        description: 'Tema minimalista de ano novo',
-        featured: false,
-        available: {
-            start: '12-01', // 1º de outubro
-            end: '12-31'    // 31 de outubro
+            start: '10-01',
+            end: '10-31'
         }
     },
 
@@ -195,6 +81,7 @@ const THEMES = {
         id: 'novembro_azul',
         name: 'Novembro Azul',
         emoji: '💙',
+        region: ['brasil'], // Específico do Brasil
         background: 'assets/themes/novembro_azul/background.png',
         overlay: 'assets/themes/novembro_azul/overlay.png',
         preview: 'assets/themes/novembro_azul/preview.jpg',
@@ -206,8 +93,8 @@ const THEMES = {
         description: 'Tema minimalista do novembro azul',
         featured: false,
         available: {
-            start: '11-01', // 1º de outubro
-            end: '11-30'    // 31 de outubro
+            start: '11-01',
+            end: '11-30'
         }
     },
 
@@ -215,6 +102,7 @@ const THEMES = {
         id: 'consciencia_negra',
         name: 'Consciencia Negra',
         emoji: '✊🏿',
+        region: ['brasil'], // Específico do Brasil
         background: 'assets/themes/consciencia_negra/background.png',
         overlay: 'assets/themes/consciencia_negra/overlay.png',
         preview: 'assets/themes/consciencia_negra/preview.jpg',
@@ -226,25 +114,168 @@ const THEMES = {
         description: 'Tema minimalista do novembro azul',
         featured: false,
         available: {
-            start: '11-01', // 1º de outubro
-            end: '11-30'    // 31 de outubro
+            start: '11-01',
+            end: '11-30'
         }
     },
 
-    brasil: {
-        id: 'brasil',
-        name: 'Brasil',
-        emoji: '🇧🇷',
-        background: 'assets/themes/brasil/background.png',
-        overlay: 'assets/themes/brasil/overlay.png',
-        preview: 'assets/themes/brasil/preview.jpg',
+    // === TEMAS GLOBAIS (disponíveis em todas as regiões) ===
+    pride_month: {
+        id: 'pride_month',
+        name: 'Mês do Orgulho',
+        emoji: '🏳️‍🌈',
+        region: 'all', // Disponível em todas as regiões
+        background: 'assets/themes/pride_month/background.png',
+        overlay: 'assets/themes/pride_month/overlay.png',
+        preview: 'assets/themes/pride_month/preview.jpg',
         colors: {
-            primary: '#72AC47',
-            secondary: '#72AC47',
-            gradient: 'linear-gradient(135deg, #009B3A 0%, #FEDF00 100%)'
+            primary: '#1E4253',
+            secondary: '#112941',
+            gradient: 'linear-gradient(135deg, #E40303 0%, #FF8C00 16%, #FFED00 32%, #008026 48%, #24408E 64%, #732982 80%, #8B00FF 100%)'
         },
-        description: 'Celebre a fauna brasileira com verde e amarelo',
-        featured: true
+        description: 'Celebre o Orgulho LGBTQIA+ com arco-íris',
+        featured: true,
+        available: {
+            start: '06-01',
+            end: '06-30'
+        }
+    },
+
+    dark_mode: {
+        id: 'dark_mode',
+        name: 'Abóboras',
+        emoji: '🌙',
+        region: 'all', // Disponível em todas as regiões
+        background: 'assets/themes/dark_mode/background.png',
+        overlay: 'assets/themes/dark_mode/overlay.png',
+        preview: 'assets/themes/dark_mode/preview.jpg',
+        colors: {
+            primary: '#9C00D0',
+            secondary: '#9C00D0',
+            gradient: 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)'
+        },
+        description: 'Tema escuro elegante e moderno',
+        featured: false,
+        available: {
+            start: '10-01',
+            end: '10-31'
+        }
+    },
+
+    halloween: {
+        id: 'halloween',
+        name: 'Aranhas',
+        emoji: '🎃',
+        region: 'all', // Disponível em todas as regiões
+        background: 'assets/themes/halloween/background.png',
+        overlay: 'assets/themes/halloween/overlay.png',
+        preview: 'assets/themes/halloween/preview.jpg',
+        colors: {
+            primary: '#F25E39',
+            secondary: '#F25E39',
+            gradient: 'linear-gradient(135deg, #1a0033 0%, #8B008B 50%, #FF6600 100%)'
+        },
+        description: 'Tema especial de Halloween com cores roxas e laranjas',
+        featured: false,
+        available: {
+            start: '10-01',
+            end: '10-31'
+        },
+        // Override de branding para este tema
+        brandingOverride: {
+            logo: {
+                text: ['HAPPY', 'HALLOWEEN'],
+                subtext: null,
+                colors: {
+                    primary: '#FF6600',
+                    secondary: '#FF6600'
+                }
+            }
+        }
+    },
+
+    zumbis: {
+        id: 'zumbis',
+        name: 'Zumbis',
+        emoji: '🧟',
+        region: 'all', // Disponível em todas as regiões
+        background: 'assets/themes/zumbis/background.png',
+        overlay: 'assets/themes/zumbis/overlay.png',
+        preview: 'assets/themes/zumbis/preview.jpg',
+        colors: {
+            primary: '#81CD11',
+            secondary: '#303836',
+            gradient: 'linear-gradient(135deg, #0a0a0a 0%, #2F4F2F 50%, #8B0000 100%)'
+        },
+        description: 'Tema apocalipse zumbi com tons verdes e sangue',
+        featured: false,
+        available: {
+            start: '10-01',
+            end: '10-31'
+        }
+    },
+
+    morcegos: {
+        id: 'morcegos',
+        name: 'Morcegos',
+        emoji: '🦇',
+        region: 'all', // Disponível em todas as regiões
+        background: 'assets/themes/morcegos/background.png',
+        overlay: 'assets/themes/morcegos/overlay.png',
+        preview: 'assets/themes/morcegos/preview.jpg',
+        colors: {
+            primary: '#F25E39',
+            secondary: '#F25E39',
+            gradient: 'linear-gradient(135deg, #FFFFFF 0%, #F0F0F0 100%)'
+        },
+        description: 'Tema minimalista com morcegos pretos e aranhas',
+        featured: false,
+        available: {
+            start: '10-01',
+            end: '10-31'
+        }
+    },
+
+    natal: {
+        id: 'natal',
+        name: 'Natal',
+        emoji: '🎄',
+        region: 'all', // Disponível em todas as regiões
+        background: 'assets/themes/natal/background.png',
+        overlay: 'assets/themes/natal/overlay.png',
+        preview: 'assets/themes/natal/preview.jpg',
+        colors: {
+            primary: '#F25E39',
+            secondary: '#F25E39',
+            gradient: 'linear-gradient(135deg, #FFFFFF 0%, #F0F0F0 100%)'
+        },
+        description: 'Tema minimalista natalino',
+        featured: false,
+        available: {
+            start: '12-01',
+            end: '12-31'
+        }
+    },
+
+    ano_novo: {
+        id: 'ano_novo',
+        name: 'Ano Novo',
+        emoji: '✨',
+        region: 'all', // Disponível em todas as regiões
+        background: 'assets/themes/ano_novo/background.png',
+        overlay: 'assets/themes/ano_novo/overlay.png',
+        preview: 'assets/themes/ano_novo/preview.jpg',
+        colors: {
+            primary: '#F25E39',
+            secondary: '#F25E39',
+            gradient: 'linear-gradient(135deg, #FFFFFF 0%, #F0F0F0 100%)'
+        },
+        description: 'Tema minimalista de ano novo',
+        featured: false,
+        available: {
+            start: '12-01',
+            end: '12-31'
+        }
     }
 };
 
@@ -268,7 +299,33 @@ function isThemeAvailable(theme) {
 }
 
 /**
+ * Verifica se um tema está disponível para uma região específica
+ * @param {Object} theme - Objeto do tema
+ * @param {String} regionId - ID da região
+ * @returns {Boolean} - true se disponível para a região
+ */
+function isThemeAvailableForRegion(theme, regionId) {
+    // Se o tema não tem região definida (compatibilidade), assume 'brasil'
+    if (!theme.region) {
+        return regionId === 'brasil';
+    }
+
+    // Se o tema é global, está disponível para todas as regiões
+    if (theme.region === 'all') {
+        return true;
+    }
+
+    // Se o tema tem array de regiões, verifica se a região está incluída
+    if (Array.isArray(theme.region)) {
+        return theme.region.includes(regionId);
+    }
+
+    return false;
+}
+
+/**
  * Retorna lista de temas disponíveis na data atual
+ * COMPATIBILIDADE: Mantém comportamento original (todos os temas disponíveis)
  * @returns {Array} - Array de objetos de tema
  */
 function getAvailableThemes() {
@@ -276,12 +333,35 @@ function getAvailableThemes() {
 }
 
 /**
+ * Retorna lista de temas disponíveis para uma região específica
+ * @param {String} regionId - ID da região
+ * @returns {Array} - Array de objetos de tema
+ */
+function getAvailableThemesForRegion(regionId) {
+    return Object.values(THEMES).filter(theme =>
+        isThemeAvailable(theme) && isThemeAvailableForRegion(theme, regionId)
+    );
+}
+
+/**
  * Retorna lista de temas em destaque
+ * COMPATIBILIDADE: Mantém comportamento original
  * @returns {Array} - Array de objetos de tema
  */
 function getFeaturedThemes() {
     return Object.values(THEMES).filter(theme =>
         theme.featured && isThemeAvailable(theme)
+    );
+}
+
+/**
+ * Retorna lista de temas em destaque para uma região específica
+ * @param {String} regionId - ID da região
+ * @returns {Array} - Array de objetos de tema
+ */
+function getFeaturedThemesForRegion(regionId) {
+    return Object.values(THEMES).filter(theme =>
+        theme.featured && isThemeAvailable(theme) && isThemeAvailableForRegion(theme, regionId)
     );
 }
 
@@ -300,4 +380,22 @@ function getThemeById(themeId) {
  */
 function getDefaultTheme() {
     return THEMES[DEFAULT_THEME];
+}
+
+/**
+ * Retorna tema padrão para uma região específica
+ * @param {String} regionId - ID da região
+ * @returns {Object} - Objeto do tema padrão ou primeiro tema disponível
+ */
+function getDefaultThemeForRegion(regionId) {
+    // Tenta encontrar um tema marcado como padrão para a região
+    const defaultTheme = Object.values(THEMES).find(theme =>
+        theme.default && isThemeAvailableForRegion(theme, regionId)
+    );
+
+    if (defaultTheme) return defaultTheme;
+
+    // Caso contrário, retorna o primeiro tema disponível para a região
+    const availableThemes = getAvailableThemesForRegion(regionId);
+    return availableThemes.length > 0 ? availableThemes[0] : getDefaultTheme();
 }

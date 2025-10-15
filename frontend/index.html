@@ -10,26 +10,34 @@
 <body>
     <div class="container">
         <header>
-            <h1>🐝 Gerador de Molduras Hornet Brasil</h1>
-            <p class="subtitle">Personalize sua foto de perfil</p>
+            <h1 id="headerTitle">🐝 Gerador de Molduras Hornet Brasil</h1>
+            <p class="subtitle" id="headerSubtitle">Personalize sua foto de perfil</p>
         </header>
+
+        <!-- Seletor de Região -->
+        <div class="region-selector-section">
+            <div class="region-selector-label" id="regionSelectorLabel">Escolha sua região:</div>
+            <div class="region-selector-grid" id="regionSelectorGrid">
+                <!-- Regiões serão carregadas dinamicamente via JavaScript -->
+            </div>
+        </div>
 
         <div class="upload-section" id="uploadSection">
             <div class="upload-icon">📸</div>
-            <h3>Clique ou arraste sua foto aqui</h3>
-            <p style="color: #999; margin-top: 10px;">Formatos aceitos: JPG, PNG</p>
+            <h3 id="uploadTitle">Clique ou arraste sua foto aqui</h3>
+            <p style="color: #999; margin-top: 10px;" id="uploadFormats">Formatos aceitos: JPG, PNG</p>
             <input type="file" id="fileInput" accept="image/*">
         </div>
 
         <div class="themes-section">
-            <h2 class="themes-title">Escolha o tema da moldura:</h2>
+            <h2 class="themes-title" id="themesTitle">Escolha o tema da moldura:</h2>
             <div class="themes-grid" id="themesGrid">
                 <!-- Temas serão carregados dinamicamente via JavaScript -->
             </div>
         </div>
 
         <div class="format-section">
-            <h2 class="format-title">Escolha o formato da imagem:</h2>
+            <h2 class="format-title" id="formatTitle">Escolha o formato da imagem:</h2>
             <div class="format-grid">
                 <div class="format-option selected" data-format="square">
                     <div class="format-preview">⬜</div>
@@ -44,8 +52,30 @@
             </div>
         </div>
 
+        <div class="logo-position-section">
+            <h2 class="logo-position-title" id="logoPositionTitle">Posição do logo regional:</h2>
+            <div class="logo-position-grid">
+                <div class="logo-position-option" data-position="top-left">
+                    <div class="position-preview">↖️</div>
+                    <div>Superior Esquerdo</div>
+                </div>
+                <div class="logo-position-option" data-position="top-right">
+                    <div class="position-preview">↗️</div>
+                    <div>Superior Direito</div>
+                </div>
+                <div class="logo-position-option" data-position="bottom-left">
+                    <div class="position-preview">↙️</div>
+                    <div>Inferior Esquerdo</div>
+                </div>
+                <div class="logo-position-option selected" data-position="bottom-right">
+                    <div class="position-preview">↘️</div>
+                    <div>Inferior Direito</div>
+                </div>
+            </div>
+        </div>
+
         <div class="frames-section">
-            <h2 class="frames-title">Escolha o posicionamento da sua foto:</h2>
+            <h2 class="frames-title" id="framesTitle">Escolha o posicionamento da sua foto:</h2>
             <div class="frames-grid">
                 <div class="frame-option selected" data-frame="center">
                     <div class="frame-preview">⭕</div>
@@ -68,7 +98,7 @@
 
         <div class="loading" id="loading" style="display: none;">
             <div class="spinner"></div>
-            <p>Processando sua imagem...</p>
+            <p id="loadingMessage">Processando sua imagem...</p>
         </div>
 
         <div class="buttons">
@@ -78,12 +108,12 @@
         </div>
 
         <div class="instructions">
-            <h3>Como usar:</h3>
+            <h3 id="instructionsTitle">Como usar:</h3>
             <ol>
-                <li>Faça upload da sua foto</li>
-                <li>Escolha um tema de moldura</li>
-                <li>Selecione o posicionamento da foto</li>
-                <li>Clique em "Baixar Imagem"</li>
+                <li id="instructionsStep1">Faça upload da sua foto</li>
+                <li id="instructionsStep2">Escolha um tema de moldura</li>
+                <li id="instructionsStep3">Selecione o posicionamento da foto</li>
+                <li id="instructionsStep4">Clique em "Baixar Imagem"</li>
             </ol>
 
             <div class="mobile-tip" style="background: #fff9e6; padding: 15px; border-radius: 8px; margin-top: 15px; border-left: 4px solid #FF6B00;">
@@ -97,7 +127,9 @@
     </div>
 
     <script src="config.js"></script>
+    <script src="regions-config.js"></script>
     <script src="themes-config.js"></script>
+    <script src="i18n.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
