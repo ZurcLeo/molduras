@@ -22,11 +22,34 @@
             </div>
         </div>
 
-        <div class="upload-section" id="uploadSection">
-            <div class="upload-icon">📸</div>
-            <h3 id="uploadTitle">Clique ou arraste sua foto aqui</h3>
-            <p style="color: #999; margin-top: 10px;" id="uploadFormats">Formatos aceitos: JPG, PNG</p>
-            <input type="file" id="fileInput" accept="image/*">
+        <!-- Seletor de Modo (Individual vs Batalha) -->
+        <div class="mode-selector">
+            <h3 class="mode-title" id="modeTitle">Modo de Jogo:</h3>
+            <div class="mode-buttons">
+                <button class="mode-btn active" data-mode="individual">
+                    📸 Individual
+                </button>
+                <button class="mode-btn" data-mode="battle">
+                    ⚔️ Batalha
+                </button>
+            </div>
+        </div>
+
+        <!-- Upload de Fotos -->
+        <div class="upload-container">
+            <div class="upload-section active" id="uploadSection1">
+                <div class="upload-icon">📸</div>
+                <h3 id="uploadTitle1">Sua Foto</h3>
+                <p style="color: #999; margin-top: 10px;" id="uploadFormats1">Formatos aceitos: JPG, PNG</p>
+                <input type="file" id="fileInput1" accept="image/*">
+            </div>
+
+            <div class="upload-section" id="uploadSection2" style="display: none;">
+                <div class="upload-icon">👤</div>
+                <h3 id="uploadTitle2">Foto do Adversário</h3>
+                <p style="color: #999; margin-top: 10px;" id="uploadFormats2">Formatos aceitos: JPG, PNG</p>
+                <input type="file" id="fileInput2" accept="image/*">
+            </div>
         </div>
 
         <div class="themes-section">

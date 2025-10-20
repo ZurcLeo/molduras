@@ -1,5 +1,7 @@
-const uploadSection = document.getElementById('uploadSection');
-const fileInput = document.getElementById('fileInput');
+const uploadSection1 = document.getElementById('uploadSection1');
+const uploadSection2 = document.getElementById('uploadSection2');
+const fileInput1 = document.getElementById('fileInput1');
+const fileInput2 = document.getElementById('fileInput2');
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 const canvasContainer = document.getElementById('canvasContainer');
@@ -13,12 +15,15 @@ const themesGrid = document.getElementById('themesGrid');
 const regionSelectorGrid = document.getElementById('regionSelectorGrid');
 const headerTitle = document.getElementById('headerTitle');
 
+// Estado da aplicação
 let uploadedImage = null;
+let uploadedImage2 = null; // Segunda foto (modo batalha)
 let selectedFrame = 'center';
 let selectedFormat = 'square';
 let selectedTheme = DEFAULT_THEME;
 let selectedRegion = null; // Será definido na inicialização
 let selectedLogoPosition = 'bottom-right'; // Posição padrão do logo
+let selectedMode = 'individual'; // 'individual' ou 'battle'
 
 // Cache de imagens por tema
 let themeImages = {};
@@ -158,17 +163,65 @@ function updateRegionInterface(region) {
 }
 
 // =====================================
+// MODO BATALHA
+// =====================================
+
+function setMode(mode) {
+    selectedMode = mode;
+
+    // Atualizar UI dos botões
+    document.querySelectorAll('.mode-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.mode === mode);
+    });
+
+    // Mostrar/ocultar segundo upload e atualizar body class
+    if (mode === 'battle') {
+        document.body.classList.add('battle-mode');
+    } else {
+        document.body.classList.remove('battle-mode');
+        uploadedImage2 = null;
+        uploadSection2.classList.remove('filled');
+    }
+
+    // Renderizar temas apropriados para o modo
+    renderThemes();
+
+    // Selecionar o primeiro tema disponível do novo modo
+    const availableThemes = mode === 'battle'
+        ? getBattleThemesForRegion(selectedRegion.id)
+        : getAvailableThemesForRegion(selectedRegion.id);
+
+    if (availableThemes.length > 0) {
+        selectedTheme = availableThemes[0].id;
+        loadTheme(selectedTheme);
+    }
+
+    // Se já tem imagens, reaplicar moldura
+    if (uploadedImage) {
+        if (mode === 'individual' || (mode === 'battle' && uploadedImage2)) {
+            applyFrame();
+        }
+    }
+}
+
+// =====================================
 // RENDERIZAÇÃO DE TEMAS
 // =====================================
 
 function renderThemes() {
-    // Usar temas disponíveis para a região selecionada
-    const availableThemes = getAvailableThemesForRegion(selectedRegion.id);
-
     themesGrid.innerHTML = '';
 
+    let availableThemes;
+
+    // Filtrar temas por modo
+    if (selectedMode === 'battle') {
+        availableThemes = getBattleThemesForRegion(selectedRegion.id);
+    } else {
+        availableThemes = getAvailableThemesForRegion(selectedRegion.id);
+    }
+
     if (availableThemes.length === 0) {
-        themesGrid.innerHTML = '<p style="grid-column: 1/-1; text-align:center; color:#999;">Nenhum tema disponível para esta região.</p>';
+        themesGrid.innerHTML = '<p style="grid-column: 1/-1; text-align:center; color:#999;">Nenhum tema disponível para esta região neste modo.</p>';
         return;
     }
 
@@ -286,7 +339,7 @@ async function preloadRegionLogo(region) {
 async function loadTheme(themeId) {
     console.log(`🎨 Carregando tema: ${themeId}`);
 
-    const theme = getThemeById(themeId);
+    const theme = getThemeByIdExtended(themeId);
     if (!theme) {
         console.error(`❌ Tema ${themeId} não encontrado`);
         return;
@@ -404,28 +457,55 @@ function updateInterfaceColors(theme) {
 // UPLOAD E DRAG & DROP
 // =====================================
 
-uploadSection.addEventListener('click', () => fileInput.click());
+// Upload Section 1 (sempre ativo)
+uploadSection1.addEventListener('click', () => fileInput1.click());
 
-fileInput.addEventListener('change', (e) => {
+fileInput1.addEventListener('change', (e) => {
     const file = e.target.files[0];
-    if (file) loadImage(file);
+    if (file) loadImage(file, 1);
 });
 
-uploadSection.addEventListener('dragover', (e) => {
+uploadSection1.addEventListener('dragover', (e) => {
     e.preventDefault();
-    uploadSection.classList.add('dragover');
+    uploadSection1.classList.add('dragover');
 });
 
-uploadSection.addEventListener('dragleave', () => {
-    uploadSection.classList.remove('dragover');
+uploadSection1.addEventListener('dragleave', () => {
+    uploadSection1.classList.remove('dragover');
 });
 
-uploadSection.addEventListener('drop', (e) => {
+uploadSection1.addEventListener('drop', (e) => {
     e.preventDefault();
-    uploadSection.classList.remove('dragover');
+    uploadSection1.classList.remove('dragover');
     const file = e.dataTransfer.files[0];
     if (file && file.type.startsWith('image/')) {
-        loadImage(file);
+        loadImage(file, 1);
+    }
+});
+
+// Upload Section 2 (modo batalha)
+uploadSection2.addEventListener('click', () => fileInput2.click());
+
+fileInput2.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (file) loadImage(file, 2);
+});
+
+uploadSection2.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    uploadSection2.classList.add('dragover');
+});
+
+uploadSection2.addEventListener('dragleave', () => {
+    uploadSection2.classList.remove('dragover');
+});
+
+uploadSection2.addEventListener('drop', (e) => {
+    e.preventDefault();
+    uploadSection2.classList.remove('dragover');
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith('image/')) {
+        loadImage(file, 2);
     }
 });
 
@@ -477,13 +557,31 @@ frameOptions.forEach(option => {
 // PROCESSAMENTO DE IMAGEM
 // =====================================
 
-function loadImage(file) {
+function loadImage(file, photoIndex = 1) {
     const reader = new FileReader();
     reader.onload = (e) => {
         const img = new Image();
         img.onload = () => {
-            uploadedImage = img;
-            applyFrame();
+            if (photoIndex === 1) {
+                uploadedImage = img;
+                uploadSection1.classList.add('filled');
+            } else {
+                uploadedImage2 = img;
+                uploadSection2.classList.add('filled');
+            }
+
+            // Validar antes de aplicar moldura
+            if (selectedMode === 'battle') {
+                // Modo batalha precisa de ambas as fotos
+                if (uploadedImage && uploadedImage2) {
+                    applyFrame();
+                }
+            } else {
+                // Modo individual precisa só da primeira foto
+                if (uploadedImage) {
+                    applyFrame();
+                }
+            }
         };
         img.src = e.target.result;
     };
@@ -503,13 +601,13 @@ async function applyFrame() {
 
 function applyFrameLocally() {
     const width = 1080;
-    const height = selectedFormat === 'portrait' ? 1360 : 1080; // 1080 + 140 (cima) + 140 (baixo) = 1360
+    const height = selectedFormat === 'portrait' ? 1360 : 1080;
     canvas.width = width;
     canvas.height = height;
 
-    const theme = getThemeById(selectedTheme);
+    const theme = getThemeByIdExtended(selectedTheme);
     console.log(`🎨 Aplicando moldura com tema: ${theme.name}`);
-    console.log(`📐 Posicionamento: ${selectedFrame}`);
+    console.log(`📐 Modo: ${selectedMode}`);
     console.log(`📱 Formato: ${selectedFormat} (${width}x${height})`);
 
     // PASSO 1: Desenhar fundo (Layer Two)
@@ -517,26 +615,21 @@ function applyFrameLocally() {
         console.log('📐 Desenhando Layer Two (fundo) - imagem carregada');
 
         if (selectedFormat === 'portrait') {
-            // Para retrato: desenhar fundo quadrado no centro com barras acima e abaixo
             const squareSize = 1080;
             const yOffset = (height - squareSize) / 2;
 
-            // Preencher barras com gradiente
             const bgGradient = ctx.createLinearGradient(0, 0, width, height);
             bgGradient.addColorStop(0, theme.colors?.primary || '#FDB813');
             bgGradient.addColorStop(1, theme.colors?.secondary || '#FF6B00');
             ctx.fillStyle = bgGradient;
             ctx.fillRect(0, 0, width, height);
 
-            // Desenhar imagem quadrada no centro
             ctx.drawImage(layerTwo, 0, yOffset, squareSize, squareSize);
         } else {
-            // Quadrado normal
             ctx.drawImage(layerTwo, 0, 0, width, height);
         }
     } else {
         console.log('📐 Desenhando fundo (fallback) - gerando gradiente dinamicamente');
-        // Fallback: usar cores do tema
         const bgGradient = ctx.createLinearGradient(0, 0, width, height);
         bgGradient.addColorStop(0, theme.colors?.primary || '#FDB813');
         bgGradient.addColorStop(1, theme.colors?.secondary || '#FF6B00');
@@ -544,19 +637,23 @@ function applyFrameLocally() {
         ctx.fillRect(0, 0, width, height);
     }
 
-    // PASSO 2: Desenhar foto do usuário
-    console.log('👤 Desenhando foto do usuário');
+    // PASSO 2: Desenhar foto(s)
+    if (selectedMode === 'battle') {
+        console.log('⚔️ Desenhando fotos em modo batalha');
+        drawBattlePhotos(ctx, theme, width, height);
+    } else {
+        console.log('👤 Desenhando foto do usuário');
+        const scale = Math.max(width / uploadedImage.width, height / uploadedImage.height);
+        const x = (width - uploadedImage.width * scale) / 2;
+        const y = (height - uploadedImage.height * scale) / 2;
 
-    const scale = Math.max(width / uploadedImage.width, height / uploadedImage.height);
-    const x = (width - uploadedImage.width * scale) / 2;
-    const y = (height - uploadedImage.height * scale) / 2;
-
-    if (selectedFrame === 'center') {
-        drawCenterFrame(width, height);
-    } else if (selectedFrame === 'full') {
-        drawFullFrame(width, height, x, y, scale);
-    } else if (selectedFrame === 'topleft') {
-        drawTopLeftFrame(width, height);
+        if (selectedFrame === 'center') {
+            drawCenterFrame(width, height);
+        } else if (selectedFrame === 'full') {
+            drawFullFrame(width, height, x, y, scale);
+        } else if (selectedFrame === 'topleft') {
+            drawTopLeftFrame(width, height);
+        }
     }
 
     // PASSO 3: Desenhar overlay (Layer One - morcegos)
@@ -595,6 +692,225 @@ function applyFrameLocally() {
 
     resetBtn.style.display = 'inline-block';
 }
+
+// =====================================
+// FUNÇÕES DE DESENHO MODO BATALHA
+// =====================================
+
+function drawBattlePhotos(ctx, theme, width, height) {
+    // Validar se o tema tem layout de batalha
+    if (!theme.layout) {
+        console.error('❌ Tema não possui layout de batalha:', theme.id);
+        console.log('ℹ️ Usando layout padrão de batalha');
+
+        // Layout padrão se o tema não tiver
+        theme.layout = {
+            leftPhoto: { x: 0.25, y: 0.5, size: 0.42 },
+            rightPhoto: { x: 0.75, y: 0.5, size: 0.42 },
+            divider: {
+                show: true,
+                type: 'vs',
+                color: theme.colors?.primary || '#FDB813',
+                width: 4
+            }
+        };
+    }
+
+    const layout = theme.layout;
+    const size = width * layout.leftPhoto.size;
+
+    // Foto esquerda (usuário 1)
+    if (uploadedImage) {
+        const x = width * layout.leftPhoto.x;
+        const y = height * layout.leftPhoto.y;
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(x, y, size / 2, 0, Math.PI * 2);
+        ctx.clip();
+
+        drawImageCentered(ctx, uploadedImage, x - size/2, y - size/2, size, size);
+        ctx.restore();
+
+        // Borda
+        ctx.beginPath();
+        ctx.arc(x, y, size / 2, 0, Math.PI * 2);
+        ctx.strokeStyle = layout.divider.color;
+        ctx.lineWidth = 6;
+        ctx.stroke();
+    }
+
+    // Foto direita (usuário 2)
+    if (uploadedImage2) {
+        const x = width * layout.rightPhoto.x;
+        const y = height * layout.rightPhoto.y;
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(x, y, size / 2, 0, Math.PI * 2);
+        ctx.clip();
+
+        drawImageCentered(ctx, uploadedImage2, x - size/2, y - size/2, size, size);
+        ctx.restore();
+
+        // Borda
+        ctx.beginPath();
+        ctx.arc(x, y, size / 2, 0, Math.PI * 2);
+        ctx.strokeStyle = layout.divider.color;
+        ctx.lineWidth = 6;
+        ctx.stroke();
+    }
+
+    // Divisor central
+    if (layout.divider && layout.divider.show) {
+        drawDivider(ctx, layout.divider, width, height);
+    }
+}
+
+function drawDivider(ctx, divider, width, height) {
+    const centerX = width / 2;
+
+    ctx.save();
+
+    if (divider.type === 'lightning') {
+        // Raio estilizado
+        ctx.strokeStyle = divider.color;
+        ctx.lineWidth = divider.width;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+
+        const points = [
+            {x: centerX, y: height * 0.1},
+            {x: centerX + 30, y: height * 0.3},
+            {x: centerX - 20, y: height * 0.5},
+            {x: centerX + 40, y: height * 0.7},
+            {x: centerX, y: height * 0.9}
+        ];
+
+        ctx.beginPath();
+        ctx.moveTo(points[0].x, points[0].y);
+        points.forEach(p => ctx.lineTo(p.x, p.y));
+        ctx.stroke();
+
+        // Brilho
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+        ctx.lineWidth = divider.width * 2;
+        ctx.globalAlpha = 0.3;
+        ctx.stroke();
+
+    } else if (divider.type === 'vs') {
+        // Texto "VS" com estilo aprimorado
+        const fontSize = divider.style === 'bold' ? 140 : 120;
+
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+
+        // Sombra externa (escura)
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
+        ctx.shadowBlur = 20;
+        ctx.shadowOffsetX = 5;
+        ctx.shadowOffsetY = 5;
+
+        // Contorno externo
+        ctx.strokeStyle = '#000000';
+        ctx.lineWidth = 12;
+        ctx.font = `bold ${fontSize}px Arial`;
+        ctx.strokeText('VS', centerX, height / 2);
+
+        // Preenchimento principal
+        ctx.fillStyle = divider.color;
+        ctx.shadowBlur = 0;
+        ctx.fillText('VS', centerX, height / 2);
+
+        // Brilho interno (se bold)
+        if (divider.style === 'bold') {
+            ctx.shadowColor = divider.color;
+            ctx.shadowBlur = 30;
+            ctx.fillText('VS', centerX, height / 2);
+        }
+
+    } else if (divider.type === 'fire') {
+        // Divisor de chamas
+        const flameHeight = height * 0.12;
+        const flameCount = 7;
+        const spacing = height / (flameCount + 1);
+
+        for (let i = 1; i <= flameCount; i++) {
+            const y = spacing * i;
+            const x = centerX + (Math.sin(i * 0.8) * 15); // Leve ondulação
+
+            // Chama externa (laranja escuro)
+            ctx.fillStyle = '#FF4500';
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.bezierCurveTo(
+                x - flameHeight * 0.4, y - flameHeight * 0.3,
+                x - flameHeight * 0.3, y - flameHeight * 0.8,
+                x, y - flameHeight
+            );
+            ctx.bezierCurveTo(
+                x + flameHeight * 0.3, y - flameHeight * 0.8,
+                x + flameHeight * 0.4, y - flameHeight * 0.3,
+                x, y
+            );
+            ctx.fill();
+
+            // Chama interna (amarelo)
+            ctx.fillStyle = '#FFD700';
+            ctx.globalAlpha = 0.7;
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.bezierCurveTo(
+                x - flameHeight * 0.25, y - flameHeight * 0.25,
+                x - flameHeight * 0.2, y - flameHeight * 0.6,
+                x, y - flameHeight * 0.7
+            );
+            ctx.bezierCurveTo(
+                x + flameHeight * 0.2, y - flameHeight * 0.6,
+                x + flameHeight * 0.25, y - flameHeight * 0.25,
+                x, y
+            );
+            ctx.fill();
+            ctx.globalAlpha = 1.0;
+        }
+
+    } else {
+        // Linha simples
+        ctx.strokeStyle = divider.color;
+        ctx.lineWidth = divider.width;
+        ctx.beginPath();
+        ctx.moveTo(centerX, 0);
+        ctx.lineTo(centerX, height);
+        ctx.stroke();
+    }
+
+    ctx.restore();
+}
+
+function drawImageCentered(ctx, img, x, y, w, h) {
+    const imgRatio = img.width / img.height;
+    const boxRatio = w / h;
+
+    let sx, sy, sw, sh;
+
+    if (imgRatio > boxRatio) {
+        sh = img.height;
+        sw = img.height * boxRatio;
+        sx = (img.width - sw) / 2;
+        sy = 0;
+    } else {
+        sw = img.width;
+        sh = img.width / boxRatio;
+        sx = 0;
+        sy = (img.height - sh) / 2;
+    }
+
+    ctx.drawImage(img, sx, sy, sw, sh, x, y, w, h);
+}
+
+// =====================================
+// FUNÇÕES DE DESENHO MODO INDIVIDUAL
+// =====================================
 
 // Funções de desenho de frames
 function drawCenterFrame(width, height) {
@@ -878,7 +1194,7 @@ function isMobile() {
 
 // Função para SALVAR imagem (download direto)
 function downloadImage() {
-    const theme = getThemeById(selectedTheme);
+    const theme = getThemeByIdExtended(selectedTheme);
     const filename = `hornet-${theme.id}-perfil.png`;
 
     console.log('💾 Iniciando download direto da imagem...');
@@ -903,7 +1219,7 @@ function downloadImage() {
 
 // Função para COMPARTILHAR imagem (Web Share API)
 async function shareImage() {
-    const theme = getThemeById(selectedTheme);
+    const theme = getThemeByIdExtended(selectedTheme);
     const filename = `hornet-${theme.id}-perfil.png`;
 
     console.log('📤 Iniciando compartilhamento via Web Share API...');
@@ -940,13 +1256,24 @@ async function shareImage() {
     }, 'image/png');
 }
 
+// Event listeners para modo batalha
+document.querySelectorAll('.mode-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        setMode(btn.dataset.mode);
+    });
+});
+
 // Event listeners
 downloadBtn.addEventListener('click', downloadImage);
 shareBtn.addEventListener('click', shareImage);
 
 resetBtn.addEventListener('click', () => {
     uploadedImage = null;
-    fileInput.value = '';
+    uploadedImage2 = null;
+    fileInput1.value = '';
+    fileInput2.value = '';
+    uploadSection1.classList.remove('filled');
+    uploadSection2.classList.remove('filled');
     canvasContainer.style.display = 'none';
     downloadBtn.style.display = 'none';
     shareBtn.style.display = 'none';

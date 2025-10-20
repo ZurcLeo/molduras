@@ -100,15 +100,78 @@ h1 {
     line-height: 1.2;
 }
 
+/* Seletor de Modo (Individual vs Batalha) */
+.mode-selector {
+    margin: 30px 0;
+    text-align: center;
+    padding: 20px;
+    background: #f9f9f9;
+    border-radius: 15px;
+    border: 2px solid #e0e0e0;
+}
+
+.mode-title {
+    font-size: 1.2em;
+    color: #1a1a1a;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.mode-buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.mode-btn {
+    padding: 15px 30px;
+    font-size: 1.1em;
+    border: 3px solid #e0e0e0;
+    border-radius: 12px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    color: #333;
+    display: inline-block;
+}
+
+.mode-btn:hover {
+    border-color: #FDB813;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(253, 184, 19, 0.3);
+}
+
+.mode-btn.active {
+    border-color: #FF6B00;
+    background: linear-gradient(135deg, #FDB813, #FF6B00);
+    color: white;
+    font-weight: bold;
+    box-shadow: 0 5px 20px rgba(255, 107, 0, 0.4);
+}
+
+/* Upload Container (para modo batalha) */
+.upload-container {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
 .upload-section {
     border: 3px dashed #FDB813;
     border-radius: 15px;
     padding: 40px;
     text-align: center;
-    margin-bottom: 30px;
     cursor: pointer;
     transition: all 0.3s;
     background: #fff9e6;
+    flex: 1;
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 .upload-section:hover {
@@ -121,13 +184,40 @@ h1 {
     border-color: #FF6B00;
 }
 
-#fileInput {
+.upload-section.filled {
+    border-color: #4CAF50;
+    background: rgba(76, 175, 80, 0.1);
+}
+
+.upload-section.filled .upload-icon::after {
+    content: ' ✓';
+    color: #4CAF50;
+}
+
+#fileInput1, #fileInput2 {
     display: none;
 }
 
 .upload-icon {
     font-size: 3em;
     margin-bottom: 15px;
+}
+
+/* Modo Batalha - Mostrar segundo upload */
+body.battle-mode .upload-container {
+    display: flex;
+}
+
+body.battle-mode #uploadSection2 {
+    display: flex !important;
+}
+
+body:not(.battle-mode) .upload-container {
+    display: block;
+}
+
+body:not(.battle-mode) #uploadSection1 {
+    margin-bottom: 30px;
 }
 
 /* Seção de Temas */
@@ -510,5 +600,18 @@ button {
 
     .theme-preview {
         height: 100px;
+    }
+
+    /* Modo Batalha em Mobile - Empilhar uploads */
+    body.battle-mode .upload-container {
+        flex-direction: column;
+    }
+
+    .mode-buttons {
+        flex-direction: column;
+    }
+
+    .mode-btn {
+        width: 100%;
     }
 }

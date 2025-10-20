@@ -279,6 +279,202 @@ const THEMES = {
     }
 };
 
+// ============================================
+// TEMAS DE BATALHA
+// ============================================
+
+const BATTLE_THEMES = {
+    // === TEMAS GLOBAIS DE BATALHA ===
+    versus_classic: {
+        id: 'versus_classic',
+        name: 'Versus Clássico',
+        mode: 'battle',
+        emoji: '⚔️',
+        region: 'all',
+        background: 'assets/themes/versus_classic/background.png',
+        overlay: 'assets/themes/versus_classic/overlay.png',
+        preview: 'assets/themes/versus_classic/preview.jpg',
+        colors: {
+            primary: '#FF0000',
+            secondary: '#0066FF',
+            gradient: 'linear-gradient(90deg, #FF0000 0%, #000000 50%, #0066FF 100%)'
+        },
+        description: 'Duelo clássico - Vermelho vs Azul',
+        featured: true,
+        layout: {
+            leftPhoto: { x: 0.28, y: 0.5, size: 0.45 },
+            rightPhoto: { x: 0.72, y: 0.5, size: 0.45 },
+            divider: {
+                show: true,
+                type: 'vs',
+                color: '#FFD700',
+                width: 6,
+                style: 'bold' // VS em negrito com brilho dourado
+            }
+        }
+    },
+
+    fire_duel: {
+        id: 'fire_duel',
+        name: 'Duelo de Fogo',
+        mode: 'battle',
+        emoji: '🔥',
+        region: 'all',
+        background: 'assets/themes/fire_duel/background.png',
+        overlay: 'assets/themes/fire_duel/overlay.png',
+        preview: 'assets/themes/fire_duel/preview.jpg',
+        colors: {
+            primary: '#FF4500',
+            secondary: '#FF8C00',
+            gradient: 'linear-gradient(135deg, #8B0000 0%, #FF4500 25%, #FF8C00 50%, #FF4500 75%, #8B0000 100%)'
+        },
+        description: 'Batalha intensa com chamas',
+        featured: true,
+        layout: {
+            leftPhoto: { x: 0.28, y: 0.5, size: 0.45 },
+            rightPhoto: { x: 0.72, y: 0.5, size: 0.45 },
+            divider: {
+                show: true,
+                type: 'vs',
+                color: '#FF4500',
+                width: 8,
+                style: 'bold' // VS em negrito estilo fogo
+            }
+        }
+    },
+
+    // === TEMAS REGIONAIS DE BATALHA ===
+    hornet_brasil_battle: {
+        id: 'hornet_brasil_battle',
+        name: 'Brasil - Batalha',
+        baseTheme: 'hornet_brasil',
+        mode: 'battle',
+        emoji: '🇧🇷',
+        region: ['brasil'],
+        background: 'assets/themes/hornet_brasil/background.png',
+        overlay: 'assets/themes/hornet_brasil/overlay.png',
+        preview: 'assets/themes/hornet_brasil/preview.jpg',
+        colors: {
+            primary: '#FF6B00',
+            secondary: '#FF751F',
+            gradient: 'linear-gradient(135deg, #FDB813 0%, #FF6B00 100%)'
+        },
+        description: 'Duelo brasileiro intenso',
+        featured: true,
+        layout: {
+            leftPhoto: { x: 0.28, y: 0.5, size: 0.44 },
+            rightPhoto: { x: 0.72, y: 0.5, size: 0.44 },
+            divider: {
+                show: true,
+                type: 'vs',
+                color: '#FDB813',
+                width: 6,
+                style: 'bold'
+            }
+        }
+    },
+
+    halloween_battle: {
+        id: 'halloween_battle',
+        name: 'Halloween - Batalha',
+        baseTheme: 'halloween',
+        mode: 'battle',
+        emoji: '🎃',
+        region: 'all',
+        background: 'assets/themes/halloween/background.png',
+        overlay: 'assets/themes/halloween/overlay.png',
+        preview: 'assets/themes/halloween/preview.jpg',
+        colors: {
+            primary: '#F25E39',
+            secondary: '#F25E39',
+            gradient: 'linear-gradient(135deg, #1a0033 0%, #8B008B 50%, #FF6600 100%)'
+        },
+        description: 'Batalha assombrada do Halloween',
+        featured: true,
+        available: {
+            start: '10-01',
+            end: '10-31'
+        },
+        layout: {
+            leftPhoto: { x: 0.27, y: 0.5, size: 0.45 },
+            rightPhoto: { x: 0.73, y: 0.5, size: 0.45 },
+            divider: {
+                show: true,
+                type: 'lightning',
+                color: '#FF6600',
+                width: 5
+            }
+        }
+    },
+
+    outubro_rosa_battle: {
+        id: 'outubro_rosa_battle',
+        name: 'Outubro Rosa - Batalha',
+        baseTheme: 'outubro_rosa',
+        mode: 'battle',
+        emoji: '🎀',
+        region: ['brasil'],
+        background: 'assets/themes/outubro_rosa/background.png',
+        overlay: 'assets/themes/outubro_rosa/overlay.png',
+        preview: 'assets/themes/outubro_rosa/preview.jpg',
+        colors: {
+            primary: '#F4298A',
+            secondary: '#F4288A',
+            gradient: 'linear-gradient(135deg, #FF1493 0%, #FF69B4 50%, #FFB6C1 100%)'
+        },
+        description: 'Batalha solidária pela conscientização',
+        featured: true,
+        available: {
+            start: '10-01',
+            end: '10-31'
+        },
+        layout: {
+            leftPhoto: { x: 0.28, y: 0.5, size: 0.44 },
+            rightPhoto: { x: 0.72, y: 0.5, size: 0.44 },
+            divider: {
+                show: true,
+                type: 'vs',
+                color: '#FF1493',
+                width: 6,
+                style: 'bold'
+            }
+        }
+    },
+
+    zumbis_battle: {
+        id: 'zumbis_battle',
+        name: 'Zumbis - Batalha',
+        baseTheme: 'zumbis',
+        mode: 'battle',
+        emoji: '🧟',
+        region: 'all',
+        background: 'assets/themes/zumbis/background.png',
+        overlay: 'assets/themes/zumbis/overlay.png',
+        preview: 'assets/themes/zumbis/preview.jpg',
+        colors: {
+            primary: '#81CD11',
+            secondary: '#303836',
+            gradient: 'linear-gradient(135deg, #0a0a0a 0%, #2F4F2F 50%, #8B0000 100%)'
+        },
+        description: 'Apocalipse zumbi - duelo mortal',
+        featured: false,
+        available: {
+            start: '10-01',
+            end: '10-31'
+        },
+        layout: {
+            leftPhoto: { x: 0.27, y: 0.5, size: 0.45 },
+            rightPhoto: { x: 0.73, y: 0.5, size: 0.45 },
+            divider: {
+                show: true,
+                type: 'lightning',
+                color: '#81CD11',
+                width: 5
+            }
+        }
+    }
+};
+
 // Tema padrão (será carregado ao iniciar)
 const DEFAULT_THEME = 'hornet_brasil';
 
@@ -398,4 +594,24 @@ function getDefaultThemeForRegion(regionId) {
     // Caso contrário, retorna o primeiro tema disponível para a região
     const availableThemes = getAvailableThemesForRegion(regionId);
     return availableThemes.length > 0 ? availableThemes[0] : getDefaultTheme();
+}
+
+/**
+ * Retorna lista de temas de batalha disponíveis para uma região específica
+ * @param {String} regionId - ID da região
+ * @returns {Array} - Array de objetos de tema de batalha
+ */
+function getBattleThemesForRegion(regionId) {
+    return Object.values(BATTLE_THEMES).filter(theme =>
+        isThemeAvailable(theme) && isThemeAvailableForRegion(theme, regionId)
+    );
+}
+
+/**
+ * Retorna tema por ID (busca em temas normais e de batalha)
+ * @param {String} themeId - ID do tema
+ * @returns {Object|null} - Objeto do tema ou null
+ */
+function getThemeByIdExtended(themeId) {
+    return THEMES[themeId] || BATTLE_THEMES[themeId] || null;
 }
