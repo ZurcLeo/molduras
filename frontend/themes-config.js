@@ -236,6 +236,27 @@ const THEMES = {
         }
     },
 
+    aboboras: {
+        id: 'aboboras',
+        name: 'Abóboras',
+        emoji: '🎃',
+        region: 'all', // Disponível em todas as regiões
+        background: 'assets/themes/aboboras/background.png',
+        overlay: 'assets/themes/aboboras/overlay.png',
+        preview: 'assets/themes/aboboras/preview.jpg',
+        colors: {
+            primary: '#F9F9F9',
+            secondary: '#DADBDD',
+            gradient: 'linear-gradient(135deg, #FFFFFF 0%, #F0F0F0 100%)'
+        },
+        description: 'Tema minimalista de abóboras',
+        featured: false,
+        available: {
+            start: '10-01',
+            end: '10-31'
+        }
+    },
+
     natal: {
         id: 'natal',
         name: 'Natal',
